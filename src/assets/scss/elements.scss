@@ -1,9 +1,10 @@
 @import './variables.scss';
 
-input {
+input, textarea {
 	border: thin solid $gray-2;
 	border-radius: 10rem;
 	font-family: $font-family;
+	font-weight: 300;
 	height: 1.5rem;
 	padding: 0.25rem 0.5rem;
 	transition: border-color 0.2s;
@@ -11,5 +12,27 @@ input {
 
 	&:hover, &:active, &:focus {
 		border-color: $gray-3;
+	}
+}
+textarea {
+	border-radius: 0.25rem;
+	font-size: 0.85rem;
+	height: unset;
+	width: unset;
+	resize: none;
+}
+
+button {
+	background-color: #fff;
+	border: thin solid $gray-2;
+	border-radius: 0.25rem;
+	font-family: $font-family;
+
+	&:hover {
+		background-color: $gray-hover;
+	}
+	&:active {
+		background-color: $gray-0;
+		padding: 0;
 	}
 }
