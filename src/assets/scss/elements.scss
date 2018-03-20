@@ -1,0 +1,13 @@
+@import './variables.scss';
+
+input {
+	border: thin solid $gray-2;
+	border-radius: 10rem;
+	font-family: $font-family;
+	padding: 0.25rem 0.5rem;
+	width: 100%;
+
+	&:hover, &:active, &:focus {
+		border-color: $gray-3;
+	}
+}
