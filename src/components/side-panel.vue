@@ -14,6 +14,7 @@
 
 <script>
 	import SidePanelConversation from './side-panel-conversation';
+
 	export default {
 		name: 'side-panel',
 		components: {

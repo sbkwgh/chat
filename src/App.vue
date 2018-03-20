@@ -1,6 +1,7 @@
 <template>
 	<div id="app">
 		<side-panel></side-panel>
+		<router-view class='router_view'></router-view>
 	</div>
 </template>
 
@@ -38,5 +39,11 @@ export default {
 		display: flex;
 		height: 100%;
 		width: 100%;
+	}
+
+	.router_view {
+		width: calc(100% - 17rem);
+		height: 100%;
+		overflow: auto;
 	}
 </style>
