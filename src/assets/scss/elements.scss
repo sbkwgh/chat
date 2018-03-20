@@ -4,7 +4,9 @@ input {
 	border: thin solid $gray-2;
 	border-radius: 10rem;
 	font-family: $font-family;
+	height: 1.5rem;
 	padding: 0.25rem 0.5rem;
+	transition: border-color 0.2s;
 	width: 100%;
 
 	&:hover, &:active, &:focus {

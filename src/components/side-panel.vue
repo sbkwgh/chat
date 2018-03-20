@@ -39,16 +39,18 @@
 		@at-root #{&}__header {
 			font-size: 2.5rem;
 			font-weight: 300;
+			height: 4.5rem;
 			padding: 0.5rem;
 			padding-top: 1rem;
 			text-align: center;
 		}
 		@at-root #{&}__search {
+			height: 2.5rem;
 			padding: 0.5rem;
 		}
 		@at-root #{&}__conversations {
 			border-top: thin solid $gray-1;
-			height: calc(100% - 7.125rem);
+			height: calc(100% - 7rem);
 			overflow-y: auto;
 		}
 	}
