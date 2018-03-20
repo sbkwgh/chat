@@ -5,7 +5,11 @@
 			<div class='conversation__actions'>Actions</div>
 		</div>
 		<div class='conversation__main'>
-			
+			<conversation-message
+				v-for='message in messages'
+				:message='message.message'
+				:self='message.self'
+			></conversation-message>
 		</div>
 		<div class='conversation__input_bar'>
 			<textarea
@@ -20,8 +24,23 @@
 </template>
 
 <script>
+	import ConversationMessage from '../components/conversation-message';
+
 	export default {
-		name: 'conversation'
+		name: 'conversation',
+		components: {
+			ConversationMessage
+		},
+		data () {
+			return {
+				messages: (new Array(10)).fill({}).map((m, i) => {
+					return {
+						message: 'Message '.repeat(20),
+						self: i % 2
+					};
+				})
+			}
+		}
 	};
 </script>
 
@@ -50,7 +69,12 @@
 				justify-self: end;
 			}
 		@at-root #{&}__main {
+			align-items: end;
+			display: flex;
+			flex-direction: column;
 			overflow-y: auto;
+			padding: 0 1rem;
+			padding-top: 1rem;
 		}
 		@at-root #{&}__input_bar {
 			display: grid;
