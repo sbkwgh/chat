@@ -1,9 +1,20 @@
 <template>
 	<div class='conversation'>
+		<c-modal v-model='showModal'>
+			<div slot='main'>
+				Are you sure you want to delete this conversation? <br/>
+				All your messages will be lost
+			</div>
+			<div slot='footer'>
+				<button @click='showModal = false'>OK</button>
+				<button>Cancel</button>
+			</div>
+		</c-modal>
+
 		<div class='conversation__header'>
 			<div class='conversation__title'>Title</div>
 			<div class='conversation__actions'>
-				<c-menu :items='settingsItems'>Settings</c-menu>
+				<c-menu :items='settingsItems' @delete='showModal = true'>Settings</c-menu>
 			</div>
 		</div>
 		<div class='conversation__main'>
@@ -27,11 +38,13 @@
 
 <script>
 	import CMenu from '../components/c-menu';
+	import CModal from '../components/c-modal';
 	import ConversationMessage from '../components/conversation-message';
 
 	export default {
 		name: 'conversation',
 		components: {
+			CModal,
 			CMenu,
 			ConversationMessage
 		},
@@ -47,7 +60,8 @@
 					{ text: 'Delete', event: 'delete' },
 					{ text: 'Mute', event: 'mute' },
 					{ text: 'Report', event: 'report' }
-				]
+				],
+				showModal: false
 			}
 		}
 	};
@@ -74,6 +88,7 @@
 			}
 			@at-root #{&}__actions {
 				align-self: center;
+				font-weight: 300;
 				grid-column: 3;
 				justify-self: end;
 			}
