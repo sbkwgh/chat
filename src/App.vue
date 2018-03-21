@@ -18,6 +18,7 @@ export default {
 <style lang='scss'>
 	@import './assets/scss/variables.scss';
 	@import './assets/scss/elements.scss';
+	@import './assets/scss/transitions.scss';
 
 	@import url('https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500');
 

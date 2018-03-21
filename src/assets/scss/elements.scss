@@ -2,7 +2,7 @@
 
 input, textarea {
 	border: thin solid $gray-2;
-	border-radius: 10rem;
+	border-radius: 0.25rem;
 	font-family: $font-family;
 	font-weight: 300;
 	height: 1.5rem;
@@ -31,7 +31,7 @@ button {
 	border: thin solid $gray-2;
 	border-radius: 0.25rem;
 	font-family: $font-family;
-	padding: 0.25rem 1rem;
+	padding: 0.5rem 1rem;
 	transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 
 	&:hover {
@@ -39,7 +39,7 @@ button {
 	}
 	&:active {
 		background-color: $gray-0;
-		padding: 0.25rem 1rem;
+		padding: 0.5rem 1rem;
 	}
 	&:focus {
 		box-shadow: 0 0 0 2px $gray-2;

@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 import App from './App';
 
 //Routes
+import Login from './routes/login';
 import Index from './routes/index';
 import IndexPlaceholder from './routes/index-placeholder';
 import Conversation from './routes/conversation';
@@ -14,9 +15,9 @@ Vue.use(VueRouter);
 const router = new VueRouter({
 	mode: 'history',
 	routes: [
+		{ path: '/', component: Login },
 		{
-			path: '/app',
-			component: Index,
+			path: '/app', component: Index,
 			children: [
 				{ path: '/', component: IndexPlaceholder },
 				{ path: 'conversation/:id', component: Conversation }
