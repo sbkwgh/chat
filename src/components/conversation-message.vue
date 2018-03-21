@@ -45,7 +45,7 @@
 			word-wrap: break-word;
 
 			@at-root #{&}--self {
-				background-color: $blue-3;
+				background-color: $blue-2;
 				border-radius: 0.5rem 0.5rem 0 0.5rem;
 				color: #fff;
 			}

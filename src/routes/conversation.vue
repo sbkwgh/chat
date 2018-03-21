@@ -2,7 +2,9 @@
 	<div class='conversation'>
 		<div class='conversation__header'>
 			<div class='conversation__title'>Title</div>
-			<div class='conversation__actions'>Actions</div>
+			<div class='conversation__actions'>
+				<c-menu :items='settingsItems'>Settings</c-menu>
+			</div>
 		</div>
 		<div class='conversation__main'>
 			<conversation-message
@@ -24,11 +26,13 @@
 </template>
 
 <script>
+	import CMenu from '../components/c-menu';
 	import ConversationMessage from '../components/conversation-message';
 
 	export default {
 		name: 'conversation',
 		components: {
+			CMenu,
 			ConversationMessage
 		},
 		data () {
@@ -38,7 +42,12 @@
 						message: 'Message '.repeat(20),
 						self: i % 2
 					};
-				})
+				}),
+				settingsItems: [
+					{ text: 'Delete', event: 'delete' },
+					{ text: 'Mute', event: 'mute' },
+					{ text: 'Report', event: 'report' }
+				]
 			}
 		}
 	};
