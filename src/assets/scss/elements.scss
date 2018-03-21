@@ -7,11 +7,15 @@ input, textarea {
 	font-weight: 300;
 	height: 1.5rem;
 	padding: 0.25rem 0.5rem;
-	transition: border-color 0.2s;
+	transition: box-shadow 0.2s, border-color 0.2s;
 	width: 100%;
 
-	&:hover, &:active, &:focus {
+	&:hover, &:active {
 		border-color: $gray-3;
+	}
+	&:focus {
+		border-color: $gray-2;
+		box-shadow: 0 0 0 2px $gray-2;
 	}
 }
 textarea {
