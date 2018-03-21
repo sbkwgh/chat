@@ -2,13 +2,13 @@
 	<div
 		class='conversation_message'
 		:class='{
-			"conversation_message--self": !!self
+			"conversation_message--self": self
 		}'
 	>
 		<pre
 			class='conversation_message__message'
 			:class='{
-				"conversation_message__message--self": !!self
+				"conversation_message__message--self": self
 			}'
 		>{{message}}</pre>
 	</div>
