@@ -4,7 +4,7 @@
 			Chat
 		</div>
 		<div class='side_panel__search'>
-			<input type='text' placeholder='Search conversations' class='side_panel__search__input'>
+			<input type='text' placeholder='Search conversations and people' class='side_panel__search__input'>
 		</div>
 		<div class='side_panel__conversations'>
 			<side-panel-conversation v-for='conversation in conversations'></side-panel-conversation>
