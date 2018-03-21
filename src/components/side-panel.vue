@@ -4,7 +4,7 @@
 			Chat
 		</div>
 		<div class='side_panel__search'>
-			<input type='text' placeholder='Search conversations'>
+			<input type='text' placeholder='Search conversations' class='side_panel__search__input'>
 		</div>
 		<div class='side_panel__conversations'>
 			<side-panel-conversation v-for='conversation in conversations'></side-panel-conversation>
@@ -33,24 +33,29 @@
 
 	.side_panel {
 		border-right: thin solid $gray-1;
+		display: grid;
+		grid-template-rows: 4.25rem 2.75rem auto;
 		height: 100%;
 		width: 17rem;
 
 		@at-root #{&}__header {
+			align-self: center;
 			font-size: 2.5rem;
 			font-weight: 300;
-			height: 4.5rem;
-			padding: 0.5rem;
-			padding-top: 1rem;
 			text-align: center;
 		}
 		@at-root #{&}__search {
-			height: 2.5rem;
-			padding: 0.5rem;
+			align-self: start;
+			padding: 0 0.5rem;
+
+			@at-root #{&}__input {
+				padding: 1rem 0.75rem;
+			}
 		}
 		@at-root #{&}__conversations {
+			align-self: start;
 			border-top: thin solid $gray-1;
-			height: calc(100% - 7rem);
+			max-height: 100%;
 			overflow-y: auto;
 		}
 	}
