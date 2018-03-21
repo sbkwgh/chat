@@ -1,24 +1,29 @@
 <template>
 	<div class='index'>
-		<div class='index__message'>
-			<div classs='index__message__icon'></div>
-			<div class='index__message__text'>Select a conversation or click 'New conversation' to start a new one</div>
-		</div>
+		<side-panel></side-panel>
+		<router-view class='router_view'></router-view>
 	</div>
 </template>
 
 <script>
+	import SidePanel from '../components/side-panel';
+
 	export default {
-		name: 'index'
+		name: 'app-route',
+		components: { SidePanel }
 	};
 </script>
 
 <style lang='scss' scoped>
-	@import '../assets/scss/variables';
-
 	.index {
 		display: flex;
-		align-items: center;
-		justify-content: center;
+		height: 100%;
+		width: 100%;
+	}
+
+	.router_view {
+		width: calc(100% - 17rem);
+		height: 100%;
+		overflow: auto;
 	}
 </style>

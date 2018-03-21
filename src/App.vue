@@ -1,7 +1,6 @@
 <template>
-	<div id="app">
-		<side-panel></side-panel>
-		<router-view class='router_view'></router-view>
+	<div id='app'>
+		<router-view></router-view>
 	</div>
 </template>
 
@@ -33,17 +32,5 @@ export default {
 		margin: 0;
 		padding: 0;
 		width: 100%;
-	}
-
-	#app {
-		display: flex;
-		height: 100%;
-		width: 100%;
-	}
-
-	.router_view {
-		width: calc(100% - 17rem);
-		height: 100%;
-		overflow: auto;
 	}
 </style>
