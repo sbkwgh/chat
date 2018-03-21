@@ -1,7 +1,10 @@
 <template>
 	<div class='side_panel'>
 		<div class='side_panel__header'>
-			Chat
+			<span>Chat</span>
+			<button class='side_panel__add button--blue_border'>
+				New conversation
+			</button>
 		</div>
 		<div class='side_panel__search'>
 			<input type='text' placeholder='Search conversations and people' class='side_panel__search__input'>
@@ -34,16 +37,24 @@
 	.side_panel {
 		border-right: thin solid $gray-1;
 		display: grid;
-		grid-template-rows: 4.25rem 2.75rem auto;
+		grid-template-rows: 4rem 2.75rem auto;
 		height: 100%;
 		width: 17rem;
 
 		@at-root #{&}__header {
+			align-items: center;
 			align-self: center;
-			font-size: 2.5rem;
+			display: flex;
+			font-size: 2rem;
 			font-weight: 300;
+			justify-content: space-between;
+			padding: 0 0.5rem;
 			text-align: center;
 		}
+			@at-root #{&}__add {
+				cursor: pointer;
+				height: 2rem;
+			}
 		@at-root #{&}__search {
 			align-self: start;
 			padding: 0 0.5rem;

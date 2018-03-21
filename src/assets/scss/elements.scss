@@ -32,7 +32,7 @@ button {
 	border-radius: 0.25rem;
 	font-family: $font-family;
 	padding: 0.25rem 1rem;
-	transition: box-shadow 0.2s, background-color 0.2s;
+	transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 
 	&:hover {
 		background-color: $gray-hover;
@@ -58,6 +58,14 @@ button {
 	&:hover { background-color: darken($blue-2, 5%) }
 	&:active { background-color: darken($blue-2, 7.5%) }
 	&:focus { box-shadow: 0 0 0 2px $blue-5; }
+}
+.button--blue_border {
+	border-color: $blue-5;
+	color: $blue-5;
+	&:focus {
+		border-color: $blue-4;
+		box-shadow: 0 0 0 2px $blue-4;
+	}
 }
 .button--red {
 	background-color: $red-1;
