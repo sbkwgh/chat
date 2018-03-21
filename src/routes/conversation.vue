@@ -1,15 +1,14 @@
 <template>
 	<div class='conversation'>
-		<c-modal v-model='showModal'>
-			<div slot='main'>
-				Are you sure you want to delete this conversation? <br/>
-				All your messages will be lost
-			</div>
-			<div slot='footer'>
-				<button @click='showModal = false'>OK</button>
-				<button>Cancel</button>
-			</div>
-		</c-modal>
+		<c-prompt-modal
+			v-model='showModal'
+			button-text='OK, delete'
+			color='red'
+			@confirm='alert'
+		>
+			Are you sure you want to delete this conversation? <br/>
+			All your messages will be lost
+		</c-prompt-modal>
 
 		<div class='conversation__header'>
 			<div class='conversation__title'>Title</div>
@@ -29,7 +28,7 @@
 				class='conversation__input'
 				placeholder='Type your message here'
 			></textarea>
-			<button class='conversation__submit'>
+			<button class='conversation__submit button--blue'>
 				Send
 			</button>
 		</div>
@@ -38,14 +37,14 @@
 
 <script>
 	import CMenu from '../components/c-menu';
-	import CModal from '../components/c-modal';
+	import CPromptModal from '../components/c-prompt-modal';
 	import ConversationMessage from '../components/conversation-message';
 
 	export default {
 		name: 'conversation',
 		components: {
-			CModal,
 			CMenu,
+			CPromptModal,
 			ConversationMessage
 		},
 		data () {
@@ -62,6 +61,11 @@
 					{ text: 'Report', event: 'report' }
 				],
 				showModal: false
+			}
+		},
+		methods: {
+			alert () {
+				console.log('Confirm')
 			}
 		}
 	};
@@ -111,17 +115,7 @@
 				width: 100%;
 			}
 			@at-root #{&}__submit {
-				background-color: $blue-2;
-				border: thin solid $blue-5;
-				color: #fff;
-				width: 3rem;
-
-				&:hover {
-					background-color: $blue-3;
-				}
-				&:active {
-					background-color: $blue-4;
-				}
+				padding: 0;
 			}
 	}
 </style>
