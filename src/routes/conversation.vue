@@ -22,6 +22,7 @@
 				:message='message.message'
 				:self='message.self'
 			></conversation-message>
+			<conversation-time-break :date='new Date()'></conversation-time-break>
 		</div>
 		<div class='conversation__input_bar'>
 			<textarea
@@ -37,6 +38,7 @@
 
 <script>
 	import CMenu from '../components/c-menu';
+	import ConversationTimeBreak from '../components/conversation-time-break';
 	import CPromptModal from '../components/c-prompt-modal';
 	import ConversationMessage from '../components/conversation-message';
 
@@ -44,6 +46,7 @@
 		name: 'conversation',
 		components: {
 			CMenu,
+			ConversationTimeBreak,
 			CPromptModal,
 			ConversationMessage
 		},
