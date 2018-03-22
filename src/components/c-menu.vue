@@ -4,11 +4,13 @@
 			class='c_menu__slot'
 			:class='{ "c_menu__slot--show": showMenu }'
 			@click='showMenu = true'
+			ref='slot'
 		>
 			<slot></slot>
 		</div>
 		<div
 			class='c_menu__menu'
+			:style='{ "left": left }'
 			:class='{ "c_menu__menu--show": showMenu }'
 		>
 			<div
@@ -33,7 +35,16 @@
 		props: ['items'],
 		data () {
 			return {
-				showMenu: false
+				showMenu: false,
+				left: 'calc(50% - 1rem)'
+			}
+		},
+		mounted () {
+			let rect = this.$refs.slot.getBoundingClientRect();
+			let rem = 16;
+
+			if(rect.right + 10*rem + 0.5*rem > window.innerWidth) {
+				this.left = 'calc(50% - 8.5rem)';
 			}
 		}
 	};
@@ -48,36 +59,40 @@
 		@at-root #{&}__slot {
 			cursor: pointer;
 
-			&::before, &::after {
-				content: '';
+			&:after, &:before {
+				bottom: calc(100% - 0.5rem - 1px);
+				left: 50%;
+				border: solid transparent;
+				content: ' ';
 				height: 0;
-				margin-top: -0.5rem;
+				width: 0;
 				opacity: 0;
 				position: absolute;
-				transition: opacity 0.2s, margin-top 0.2s;
-				width: 0;
+				pointer-events: none;
+				z-index: 4;
+			}
+			&:after {
+				border-color: rgba(255, 255, 255, 0);
+				border-bottom-color: #fff;
+				border-width: 8px;
+				margin-left: -8px;
+				transition: opacity 0.2s, bottom 0.2s;
 			}
 
-			@at-root #{&}--show::before, #{&}--show::after {
-				margin-top: 0;
+			&:before {
+				border-color: rgba(84, 84, 84, 0);
+				border-bottom-color: #545454;
+				border-width: 9px;
+				margin-left: -9px;
+				transition: opacity 0.05s, bottom 0.2s;
+			}
+
+			@at-root #{&}--show:before, #{&}--show:after {
+				bottom: calc(100% - 1.5rem - 1px);
 				opacity: 1;
 			}
-
-			&::before {
-				border-bottom: solid 0.5rem $gray-2;
-				border-left: solid 0.5rem transparent;
-				border-right: solid 0.5rem transparent;
-				left: calc(50% - 0.5rem);
-				top: calc(100% - 0.2rem + 1px);
-			}
-
-			&::after {
-				border-bottom: solid calc(0.5rem - 1px) #fff;
-				border-left: solid calc(0.5rem - 0.75px) transparent;
-				border-right: solid calc(0.5rem - 0.75px) transparent;
-				left: calc(50% - 0.5rem + 1px);
-				top: calc(100% - 0.2rem + 2px);
-				z-index: 4;
+			@at-root #{&}--show:before {
+				transition: opacity 0.25s, bottom 0.2s;
 			}
 		}
 
@@ -99,7 +114,6 @@
 			border: 1px solid $gray-2;
 			border-radius: 0.25rem;
 			box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.2);
-			left: calc(-100% - 2.5rem);
 			margin-top: -0.5rem;
 			opacity: 0;
 			overflow: hidden;

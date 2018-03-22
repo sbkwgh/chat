@@ -1,7 +1,9 @@
 <template>
 	<div class='side_panel'>
 		<div class='side_panel__header'>
-			<span>Chat</span>
+			<c-menu class='side_panel__username' :items='userMenu'>
+				Username <span>&#9660;</span>
+			</c-menu>
 			<button class='side_panel__add button--blue_border'>
 				New conversation
 			</button>
@@ -16,16 +18,22 @@
 </template>
 
 <script>
+	import CMenu from './c-menu';
 	import SidePanelConversation from './side-panel-conversation';
 
 	export default {
 		name: 'side-panel',
 		components: {
+			CMenu,
 			SidePanelConversation
 		},
 		data () {
 			return {
-				conversations: (new Array(10)).fill(0)
+				conversations: (new Array(10)).fill(0),
+				userMenu: [
+					{ text: 'Settings', event: 'settings' },
+					{ text: 'Log out', event: 'logout' }
+				]
 			};
 		}
 	};
@@ -45,12 +53,20 @@
 			align-items: center;
 			align-self: center;
 			display: flex;
-			font-size: 2rem;
 			font-weight: 300;
 			justify-content: space-between;
 			padding: 0 0.5rem;
 			text-align: center;
 		}
+			@at-root #{&}__username {
+				cursor: pointer;
+
+				span {
+					color: $gray-4;
+					font-size: 0.85rem;
+					margin-left: -0.25rem;
+				}
+			}
 			@at-root #{&}__add {
 				cursor: pointer;
 				height: 2rem;
