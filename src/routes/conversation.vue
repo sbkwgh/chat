@@ -9,13 +9,23 @@
 			Are you sure you want to delete this conversation? <br/>
 			All your messages will be lost
 		</c-prompt-modal>
-
-		<div class='conversation__header'>
-			<div class='conversation__title'>Title</div>
-			<div class='conversation__actions'>
-				<c-menu :items='settingsItems' @delete='showModal = true'>Settings</c-menu>
+		
+		<transition name='transition-fade' mode='out-in'>
+			<div
+				class='conversation__header'
+				key='new-conversation'
+				v-if='showNewConversationBar'
+			>
+				<new-conversation-input class='conversation__new_conversation_input'></new-conversation-input>
 			</div>
-		</div>
+			<div class='conversation__header' key='header' v-else>
+				<div class='conversation__title'>Title</div>
+				<div class='conversation__actions'>
+					<c-menu :items='settingsItems' @delete='showModal = true'>Settings</c-menu>
+				</div>
+			</div>
+		</transition>
+
 		<div class='conversation__main'>
 			<conversation-message
 				v-for='message in messages'
@@ -41,6 +51,7 @@
 	import ConversationTimeBreak from '../components/conversation-time-break';
 	import CPromptModal from '../components/c-prompt-modal';
 	import ConversationMessage from '../components/conversation-message';
+	import NewConversationInput from '../components/new-conversation-input';
 
 	export default {
 		name: 'conversation',
@@ -48,7 +59,8 @@
 			CMenu,
 			ConversationTimeBreak,
 			CPromptModal,
-			ConversationMessage
+			ConversationMessage,
+			NewConversationInput
 		},
 		data () {
 			return {
@@ -63,7 +75,8 @@
 					{ text: 'Mute', event: 'mute' },
 					{ text: 'Report', event: 'report' }
 				],
-				showModal: false
+				showModal: false,
+				showNewConversationBar: false
 			}
 		},
 		methods: {
@@ -86,9 +99,9 @@
 			display: grid;
 			grid-column-gap: 0.5rem;
 			grid-template-columns: 1fr auto 1fr;
-			padding: 1rem 2rem;
+			padding: 0rem 2rem;
 		}
-			@at-root #{&}__title {
+			@at-root #{&}__title, #{&}__new_conversation_input {
 				align-self: center;
 				grid-column: 2;
 				justify-self: center;
