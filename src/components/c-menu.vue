@@ -68,7 +68,7 @@
 				border-left: solid 0.5rem transparent;
 				border-right: solid 0.5rem transparent;
 				left: calc(50% - 0.5rem);
-				top: calc(100% - 0.2rem);
+				top: calc(100% - 0.2rem + 1px);
 			}
 
 			&::after {
@@ -76,7 +76,7 @@
 				border-left: solid calc(0.5rem - 0.75px) transparent;
 				border-right: solid calc(0.5rem - 0.75px) transparent;
 				left: calc(50% - 0.5rem + 1px);
-				top: calc(100% - 0.2rem + 1px);
+				top: calc(100% - 0.2rem + 2px);
 				z-index: 4;
 			}
 		}
