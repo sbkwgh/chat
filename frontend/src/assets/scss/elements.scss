@@ -1,0 +1,78 @@
+@import './variables.scss';
+
+input, textarea {
+	border: thin solid $gray-2;
+	border-radius: 0.25rem;
+	font-family: $font-family;
+	font-weight: 300;
+	height: 1.5rem;
+	padding: 0.25rem 0.5rem;
+	transition: box-shadow 0.2s, border-color 0.2s;
+	width: 100%;
+
+	&:hover, &:active {
+		border-color: $gray-3;
+	}
+	&:focus {
+		border-color: $gray-2;
+		box-shadow: 0 0 0 2px $gray-2;
+	}
+}
+textarea {
+	border-radius: 0.25rem;
+	font-size: 0.85rem;
+	height: unset;
+	width: unset;
+	resize: none;
+}
+
+button {
+	background-color: #fff;
+	border: thin solid $gray-2;
+	border-radius: 0.25rem;
+	font-family: $font-family;
+	padding: 0.5rem 1rem;
+	transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+
+	&:hover {
+		background-color: $gray-hover;
+	}
+	&:active {
+		background-color: $gray-0;
+		padding: 0.5rem 1rem;
+	}
+	&:focus {
+		box-shadow: 0 0 0 2px $gray-2;
+		outline: none;
+	}
+
+	&::-moz-focus-inner {
+		border: 0;
+	}
+}
+.button--blue {
+	background-color: $blue-2;
+	border-color: $blue-5;
+	color: #fff;
+
+	&:hover { background-color: darken($blue-2, 5%) }
+	&:active { background-color: darken($blue-2, 7.5%) }
+	&:focus { box-shadow: 0 0 0 2px $blue-5; }
+}
+.button--blue_border {
+	border-color: $blue-5;
+	color: $blue-5;
+	&:focus {
+		border-color: $blue-4;
+		box-shadow: 0 0 0 2px $blue-4;
+	}
+}
+.button--red {
+	background-color: $red-1;
+	border-color: $red-5;
+	color: #fff;
+
+	&:hover { background-color: darken($red-1, 5%) }
+	&:active { background-color: darken($red-1, 7.5%) }
+	&:focus { box-shadow: 0 0 0 2px $red-5; }
+}
