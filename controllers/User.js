@@ -4,9 +4,27 @@ let bcrypt = require('bcrypt');
 
 exports.createAccount = async function (username, password) {
 	let user = await User.create({ username, hash: password });
+	let userJson = user.toJSON();
+	delete userJson.hash;
 
-	return user;
+	return userJson;
 };
+
+exports.getUser = async function (id) {
+	let user = await User.findById(id, {
+		attributes: { exclude: ['hash'] }
+	});
+
+	if(user) {
+		return user.toJSON();
+	} else {
+		return validationError(sequelize, {
+			message: 'User does not exist',
+			path: 'id',
+			value: id
+		});
+	}
+}
 
 exports.login = async function (username, password) {
 	let user = await User.findOne({ where: { username } });

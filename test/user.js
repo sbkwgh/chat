@@ -28,7 +28,7 @@ describe('User', () => {
 
 			userRes.should.have.property('username', 'username');
 			userRes.should.have.property('id');
-			userRes.should.have.property('hash');
+			userRes.should.not.have.property('hash');
 
 			let user = await User.findOne({ where: { username: 'username' } });
 			user.should.have.property('username', 'username');
@@ -130,6 +130,23 @@ describe('User', () => {
 			} catch (e) {
 				expect(e instanceof Sequelize.ValidationError).to.be.true;
 				e.errors.should.contain.something.with.property('message', 'Username is incorrect');
+			}
+		});
+	})
+
+	describe('controller: getUser', () => {
+		it('should get an account via the id', async () => {
+			let res = await userController.getUser(1);
+
+			res.should.have.property('username', 'username');
+			res.should.not.have.property('hash');
+		});
+		it('should return an error if the username does not exist', async () => {
+			try {
+				let res = await userController.getUser(null);
+			} catch (e) {
+				(e instanceof Sequelize.ValidationError).should.be.true;
+				e.errors.should.contain.something.with.property('message', 'User does not exist');
 			}
 		});
 	})
