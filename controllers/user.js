@@ -10,9 +10,24 @@ exports.create = async function (username, password) {
 	return userJson;
 };
 
-exports.get = async function (id) {
-	let user = await User.findById(id, {
-		attributes: { exclude: ['hash'] }
+exports.get = async function () {
+	let arg = arguments[0]
+	let where = {};
+
+	if(typeof arg === 'string') {
+		where.username = arg;
+	} else if(typeof arg === 'number') {
+		where.id = arg;
+	} else {
+		throw new validationError(sequelize, {
+			message: 'Parameter must be a string or number',
+			value: arg
+		});
+	}
+
+	let user = await User.findOne({
+		attributes: { exclude: ['hash'] },
+		where
 	});
 
 	if(user) {
@@ -27,7 +42,9 @@ exports.get = async function (id) {
 }
 
 exports.login = async function (username, password) {
-	let user = await User.findOne({ where: { username } });
+	let user = await User.findOne({ 
+		where: { username }
+	});
 
 	if(!user) {
 		throw validationError(sequelize, {
@@ -39,7 +56,8 @@ exports.login = async function (username, password) {
 		let res = await bcrypt.compare(password, user.hash);
 
 		if(res) {
-			return true;
+			delete user.hash;
+			return user.toJSON();
 		} else {
 			throw validationError(sequelize, {
 				message: 'Password is incorrect',

@@ -111,10 +111,10 @@ describe('User', () => {
 	});
 
 	describe('controller: login', () => {
-		it('should return `true` if the username and password are correct', async () => {
+		it('should return the user if the username and password are correct', async () => {
 			let res = await userController.login('username', 'password');
 
-			res.should.be.true;
+			res.should.have.property('username', 'username');
 		});
 		it('should return an error if the password is incorrect', async () => {
 			try {
@@ -137,16 +137,30 @@ describe('User', () => {
 	describe('controller: get', () => {
 		it('should get an account via the id', async () => {
 			let res = await userController.get(1);
+			
+			res.should.have.property('username', 'username');
+			res.should.not.have.property('hash');
+		});
+		it('should get an account via the username', async () => {
+			let res = await userController.get('username');
 
 			res.should.have.property('username', 'username');
 			res.should.not.have.property('hash');
 		});
 		it('should return an error if the username does not exist', async () => {
 			try {
-				let res = await userController.get(null);
+				let res = await userController.get(3);
 			} catch (e) {
 				(e instanceof Sequelize.ValidationError).should.be.true;
 				e.errors.should.contain.something.with.property('message', 'User does not exist');
+			}
+		});
+		it('should return an error if parameter is not a string or number', async () => {
+			try {
+				let res = await userController.get(null);
+			} catch (e) {
+				(e instanceof Sequelize.ValidationError).should.be.true;
+				e.errors.should.contain.something.with.property('message', 'Parameter must be a string or number');
 			}
 		});
 	})
