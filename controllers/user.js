@@ -2,7 +2,7 @@ let validationError = require('../lib/validationError.js');
 let { User, sequelize } = require('../models');
 let bcrypt = require('bcrypt');
 
-exports.createAccount = async function (username, password) {
+exports.create = async function (username, password) {
 	let user = await User.create({ username, hash: password });
 	let userJson = user.toJSON();
 	delete userJson.hash;
@@ -10,7 +10,7 @@ exports.createAccount = async function (username, password) {
 	return userJson;
 };
 
-exports.getUser = async function (id) {
+exports.get = async function (id) {
 	let user = await User.findById(id, {
 		attributes: { exclude: ['hash'] }
 	});
