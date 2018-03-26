@@ -3,5 +3,11 @@ module.exports = (sequelize, DataTypes) => {
 		name: DataTypes.STRING
 	}, {});
 
+	Conversation.associate = function(models) {
+		Conversation.hasMany(models.User, {
+			through: models.UserConversation
+		});
+	};
+
 	return Conversation;
 };
