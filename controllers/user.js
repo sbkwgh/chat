@@ -2,7 +2,7 @@ let validationError = require('../lib/validationError.js');
 let { User, sequelize } = require('../models');
 let bcrypt = require('bcrypt');
 
-exports.create = async function (username, password) {
+exports.create = async function (username , password) {
 	let user = await User.create({ username, hash: password });
 	let userJson = user.toJSON();
 	delete userJson.hash;
@@ -19,7 +19,7 @@ exports.get = async function () {
 	} else if(typeof arg === 'number') {
 		where.id = arg;
 	} else {
-		throw new validationError(sequelize, {
+		throw validationError(sequelize, {
 			message: 'Parameter must be a string or number',
 			value: arg
 		});
@@ -33,10 +33,9 @@ exports.get = async function () {
 	if(user) {
 		return user.toJSON();
 	} else {
-		return validationError(sequelize, {
+		throw validationError(sequelize, {
 			message: 'User does not exist',
-			path: 'id',
-			value: id
+			value: arg
 		});
 	}
 }
@@ -56,8 +55,9 @@ exports.login = async function (username, password) {
 		let res = await bcrypt.compare(password, user.hash);
 
 		if(res) {
-			delete user.hash;
-			return user.toJSON();
+			let userJson = user.toJSON();
+			delete userJson.hash;
+			return userJson;
 		} else {
 			throw validationError(sequelize, {
 				message: 'Password is incorrect',

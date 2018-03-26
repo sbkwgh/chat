@@ -10,7 +10,7 @@ let models = require('../models');
 let userController = require('../controllers/user.js');
 
 
-describe('User', () => {
+describe('User controller', () => {
 	before(done => {
 		sequelizeInstance
 			.sync({ force: true })
