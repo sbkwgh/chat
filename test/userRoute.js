@@ -14,20 +14,15 @@ let userController = require('../controllers/user.js');
 
 describe('User route', () => {
 	before(done => {
-		let synchDb = () => {
-			sequelizeInstance
-				.sync({ force: true })
-				.then(() => done())
-				.catch(done);
-		};
-
-		app.on('serverStarted', synchDb);
-		if(app.get('server started')) { synchDb(); }
+		app.on('server started', done);
+		if(app.get('server started')) { done(); }
 	})
 
-	after(() => {
-		sequelizeInstance.close();
-		server.close();
+	after(done => {
+		sequelizeInstance
+			.sync({ force: true })
+			.then(() => done())
+			.catch(done);
 	});
 
 	describe('POST /', () => {

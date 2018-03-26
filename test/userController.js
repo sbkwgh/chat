@@ -11,15 +11,11 @@ let userController = require('../controllers/user.js');
 
 
 describe('User controller', () => {
-	before(done => {
+	after(done => {
 		sequelizeInstance
 			.sync({ force: true })
 			.then(() => done())
 			.catch(done);
-	})
-
-	after(() => {
-		sequelizeInstance.close();
 	})
 
 	describe('controller: create', () => {
