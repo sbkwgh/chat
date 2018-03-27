@@ -9,7 +9,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       content: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT('long'),
+        allowNull: false
       },
       read: {
         type: Sequelize.BOOLEAN

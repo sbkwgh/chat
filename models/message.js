@@ -1,7 +1,25 @@
 module.exports = (sequelize, DataTypes) => {
 	let Message = sequelize.define('Message', {
-		content: DataTypes.STRING,
-		read: DataTypes.BOOLEAN
+		content: {
+			type: DataTypes.TEXT('long'),
+			validate: {
+				isString (val) {
+					if(typeof val !== 'string') {
+						throw new sequelize.ValidationError('Message must be a string');
+					}
+				},
+				minLength (val) {
+					if(!String(val).trim().length) {
+						throw new sequelize.ValidationError('Message cannot be blank');
+					}
+				}
+			},
+			allowNull: false
+		},
+		read: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false
+		}
 	}, {});
 
 	Message.associate = function(models) {
