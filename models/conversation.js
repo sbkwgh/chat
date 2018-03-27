@@ -1,10 +1,25 @@
 module.exports = (sequelize, DataTypes) => {
 	let Conversation = sequelize.define('Conversation', {
-		name: DataTypes.STRING
+		name: {
+			type: DataTypes.STRING,
+			required: true,
+			validate: {
+				isString (val) {
+					if(typeof val !== 'string') {
+						throw new sequelize.ValidationError('Name must be of type string');
+					}
+				},
+				maxLength (val) {
+					if(val.toString().trim().length > 1000) {
+						throw new sequelize.ValidationError('Name must be 1000 characters or less')
+					}
+				}
+			}
+		}
 	}, {});
 
 	Conversation.associate = function(models) {
-		Conversation.hasMany(models.User, {
+		Conversation.belongsToMany(models.User, {
 			through: models.UserConversation
 		});
 	};
