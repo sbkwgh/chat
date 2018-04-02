@@ -23,4 +23,14 @@ router.post('/', async (req, res, next) => {
 	} catch (e) { next(e); }
 });
 
+router.get('/:id', async (req, res, next) => {
+	try {
+		let conversation = await conversationController.get(
+			req.session.userId, +req.params.id
+		);
+
+		res.json(conversation);
+	} catch (e) { next(e); }
+});
+
 module.exports = router;

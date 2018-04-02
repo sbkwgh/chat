@@ -1,6 +1,6 @@
 let Type = require('../lib/type');
 let validationError = require('../lib/validationError');
-let { User, Conversation, Sequelize } = require('../models');
+let { User, Conversation, Message, Sequelize } = require('../models');
 
 exports.create = async function (userIds, name) {
 	//Remove duplicates
@@ -57,4 +57,26 @@ exports.getFromUser = async function (userId) {
 	});
 
 	return conversations.map(c => c.toJSON());
+};
+
+exports.get = async function (userId, conversationId) {
+	let conversation = await Conversation.findById(Type.number(conversationId), {
+		include: [
+			{
+				model: User,
+				where: { id: Type.number(userId) },
+				attributes: { exclude: ['hash'] }
+			},
+			Message
+		]
+	});
+
+
+	if(!conversation) {
+		throw validationError(Sequelize, {
+			message: 'Either the conversation doesn\'t exist or you\'re not part of the conversation'
+		});
+	} else {
+		return conversation.toJSON();
+	}
 };

@@ -11,6 +11,7 @@ let models = require('../models');
 	let { Sequelize, User, Conversation } = models;
 	let sequelizeInstance = models.sequelize;
 let userController = require('../controllers/user.js');
+let messageController = require('../controllers/message.js');
 
 let userAgent = chai.request.agent(server);
 let userTwoAgent = chai.request.agent(server);
@@ -97,7 +98,7 @@ describe('Conversation route', () => {
 		});
 	});
 
-	describe('GET /', () => {
+	describe('GET /api/user/:id/conversations', () => {
 		it('should get a list of conversation from a user', async () => {
 			let res = await userAgent.get('/api/user/1/conversations');
 
@@ -107,6 +108,43 @@ describe('Conversation route', () => {
 		it('should return an error if not same account', done => {
 			userTwoAgent
 				.get('/api/user/1/conversations')
+				.end((err, res) => {
+					res.body.errors.should.contain.something.with.property('message', 'Request not authorized')
+					done();
+				})
+		});
+	});
+
+	describe('GET /:id', () => {
+		before(async () => {
+			await messageController.create({
+				userId: 1,
+				conversationId: 1,
+				content: 'message 1'
+			});
+			await messageController.create({
+				userId: 2,
+				conversationId: 1,
+				content: 'message 2'
+			});
+			await messageController.create({
+				userId: 1,
+				conversationId: 1,
+				content: 'message 3'
+			});
+		});
+
+		it('should get a conversation and messages', async () => {
+			let res = await userAgent.get('/api/conversation/1');
+
+			res.body.name.should.equal('user_one, user_two, user_three')
+
+			res.body.Messages.length.should.equal(3);
+			res.body.Messages[2].should.have.property('content', 'message 3');
+		});
+		it('should return an error if user is not logged in', done => {
+			chai.request(server)
+				.get('/api/conversation/1')
 				.end((err, res) => {
 					res.body.errors.should.contain.something.with.property('message', 'Request not authorized')
 					done();

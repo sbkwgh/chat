@@ -7,6 +7,7 @@ let models = require('../models');
 	let { Sequelize, User, Conversation } = models;
 	let sequelizeInstance = models.sequelize;
 let conversationController = require('../controllers/conversation');
+let messageController = require('../controllers/message');
 
 
 describe('Conversation controller', () => {
@@ -113,6 +114,59 @@ describe('Conversation controller', () => {
 				await conversationController.getFromUser({});
 			} catch (e) {
 				e.errors.should.contain.something.with.property('message', 'Parameter must be of type number');
+			}
+		});
+	});
+
+	describe('get', () => {
+		before(async () => {
+			await messageController.create({
+				userId: 1,
+				conversationId: 1,
+				content: 'message 1'
+			});
+			await messageController.create({
+				userId: 2,
+				conversationId: 1,
+				content: 'message 2'
+			});
+			await messageController.create({
+				userId: 1,
+				conversationId: 1,
+				content: 'message 3'
+			});
+		});
+
+		it('should get conversation and messages', async () => {
+			let conversation = await conversationController.get(1, 1);
+			
+			conversation.name.should.equal('user_one, user_two');
+			conversation.Messages.length.should.equal(3);
+
+			conversation.Messages[0].should.have.property('content', 'message 1');
+			conversation.Messages[1].should.have.property('content', 'message 2');
+			conversation.Messages[2].should.have.property('content', 'message 3');
+
+			conversation.Messages[0].should.have.property('UserId', 1);
+			conversation.Messages[1].should.have.property('UserId', 2);
+			conversation.Messages[2].should.have.property('UserId', 1);
+		})
+		it('should return an error if the conversation does not exist', async () => {
+			try {
+				await conversationController.get(1, 10);
+
+				expect(true).to.be.false;
+			} catch (e) {
+				e.errors.should.contain.something.with.property('message', 'Either the conversation doesn\'t exist or you\'re not part of the conversation');
+			}
+		});
+		it('should return an error if the user is not part of the conversation', async () => {
+			try {
+				await conversationController.get(3, 1);
+
+				expect(true).to.be.false;
+			} catch (e) {
+				e.errors.should.contain.something.with.property('message', 'Either the conversation doesn\'t exist or you\'re not part of the conversation');
 			}
 		});
 	});

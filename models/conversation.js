@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
 		Conversation.belongsToMany(models.User, {
 			through: models.UserConversation
 		});
+		Conversation.hasMany(models.Message);
 	};
 
 	return Conversation;
