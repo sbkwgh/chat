@@ -1,4 +1,5 @@
 let userController = require('../controllers/user');
+let conversationController = require('../controllers/conversation');
 let router = require('express').Router();
 
 function setSession (req, res, user) {
@@ -46,6 +47,30 @@ router.get('/:username_id', async (req, res, next) => {
 
 		res.json(user);
 	} catch (e) { next(e) };
+});
+
+router.all('*', (req, res, next) => {
+	if(!req.session.authenticated) {
+		res.status(401);
+		res.json({
+			errors: [{ message: 'Request not authorized' }]
+		})
+	} else {
+		next();
+	}
+});
+
+router.get('/:user_id/conversations', async (req, res, next) => {
+	try {
+		let id = +req.params.user_id;
+
+		if(req.session.userId !== id) {
+			throw new Error('unauthorized');
+		}
+
+		let conversations = await conversationController.getFromUser(id);
+		res.json(conversations);
+	} catch (e) { next(e); }
 });
 
 module.exports = router;

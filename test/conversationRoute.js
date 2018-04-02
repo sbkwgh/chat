@@ -99,14 +99,14 @@ describe('Conversation route', () => {
 
 	describe('GET /', () => {
 		it('should get a list of conversation from a user', async () => {
-			let res = await userAgent.get('/api/conversation/1');
+			let res = await userAgent.get('/api/user/1/conversations');
 
 			res.body.length.should.equal(1);
 			res.body.should.contain.something.with.property('name', 'user_one, user_two, user_three');
 		});
 		it('should return an error if not same account', done => {
 			userTwoAgent
-				.get('/api/conversation/1')
+				.get('/api/user/1/conversations')
 				.end((err, res) => {
 					res.body.errors.should.contain.something.with.property('message', 'Request not authorized')
 					done();

@@ -23,17 +23,4 @@ router.post('/', async (req, res, next) => {
 	} catch (e) { next(e); }
 });
 
-router.get('/:user_id', async (req, res, next) => {
-	try {
-		let id = +req.params.user_id;
-
-		if(req.session.userId !== id) {
-			throw new Error('unauthorized');
-		}
-
-		let conversations = await conversationController.getFromUser(id);
-		res.json(conversations);
-	} catch (e) { next(e); }
-});
-
 module.exports = router;
