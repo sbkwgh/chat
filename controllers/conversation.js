@@ -56,5 +56,5 @@ exports.getFromUser = async function (userId) {
 		}]
 	});
 
-	return conversations;
+	return conversations.map(c => c.toJSON());
 };

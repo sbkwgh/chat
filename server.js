@@ -22,17 +22,24 @@ app.use(cookieParser(
 app.use(bodyParser.json());
 
 app.use('/api/user', require('./routes/user'));
+app.use('/api/conversation', require('./routes/conversation'));
+app.use('/api/message', require('./routes/message'));
 
 app.use((err, req, res, next) => {
 	if(err instanceof sequelize.ValidationError) {
 		res.status(400);
 		res.json(err);
+	} else if (err.message === 'unauthorized') {
+		res.status(401);
+		res.json({
+			errors: [{ message: 'Request not authorized' }]
+		});
 	} else {
 		console.log(err);
 
 		res.status(500)
 		res.json({
-			errors: ['There was an unknown error on our side - please try again later']
+			errors: [{ message: 'There was an unknown error on our side - please try again later' }]
 		});
 	}
 });

@@ -3,6 +3,8 @@ let router = require('express').Router();
 
 function setSession (req, res, user) {
 	req.session.authenticated = true;
+	req.session.userId = user.id;
+	
 	res.cookie('username', user.username);
 	res.cookie('id', user.id);
 }
