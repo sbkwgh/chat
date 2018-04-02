@@ -23,6 +23,7 @@ describe('Message controller', () => {
 		}
 
 		await conversationController.create([1,2,3], 'group');
+		await conversationController.create([1,2]);
 	});
 
 	after(async () => {
@@ -96,7 +97,19 @@ describe('Message controller', () => {
 				})
 				expect(true).to.be.false
 			} catch (e) {
-				e.errors.should.contain.something.with.property('message', 'Conversation does not exist')
+				e.errors.should.contain.something.with.property('message', 'Conversation does not exist or user is not part of conversation')
+			}
+		});
+		it('should return an error if user is not part of conversation', async () => {
+			try {
+				await messageController.create({
+					content: 'sdfghyt',
+					userId: 3,
+					conversationId: 2
+				})
+				expect(true).to.be.false
+			} catch (e) {
+				e.errors.should.contain.something.with.property('message', 'Conversation does not exist or user is not part of conversation')
 			}
 		});
 		it('should return an error if conversationId is invalid', async () => {
@@ -108,7 +121,7 @@ describe('Message controller', () => {
 				})
 				expect(true).to.be.false
 			} catch (e) {
-				e.errors.should.contain.something.with.property('message', 'Conversation does not exist')
+				e.errors.should.contain.something.with.property('message', 'Conversation does not exist or user is not part of conversation')
 			}
 		});
 	});

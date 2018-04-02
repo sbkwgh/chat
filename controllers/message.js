@@ -9,18 +9,24 @@ let { Message, Sequelize, User, Conversation } = require('../models');
 */
 exports.create = async function (params) {
 	let { content, userId, conversationId } = params;
-	let user = await User.findById(userId);
-	let conversation = await Conversation.findById(conversationId);
 
+	let user = await User.findById(userId);
 	if(!user) {
 		throw validationError(Sequelize, {
 			message: 'User does not exist',
 			path: 'UserId'
 		});
 	}
+
+	let conversation = await Conversation.findById(conversationId, {
+		include: [{
+			model: User,
+			where: { id: userId }
+		}]
+	});
 	if(!conversation) {
 		throw validationError(Sequelize, {
-			message: 'Conversation does not exist',
+			message: 'Conversation does not exist or user is not part of conversation',
 			path: 'ConversationId'
 		});
 	}
