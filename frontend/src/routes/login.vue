@@ -1,6 +1,6 @@
 <template>
 	<div class='login'>
-		<transition name='transition-fade' mode='out-in'>
+		<transition name='transition-horizontal-slide' mode='out-in'>
 			<form key='login' class='login__form' v-if='showLogin'>
 				<label>
 					<span>Username</span>

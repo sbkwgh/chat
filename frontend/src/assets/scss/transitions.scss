@@ -12,3 +12,15 @@
 .transition-slide-fade-enter-active, .transition-slide-fade-leave-active {
 	transition: opacity 0.2s linear, transform 0.2s ease;
 }
+
+.transition-horizontal-slide-enter {
+	opacity: 0;
+	transform: translateX(-1rem);
+}
+.transition-horizontal-slide-leave-to {
+	opacity: 0;
+	transform: translateX(1rem);
+}
+.transition-horizontal-slide-enter-active, .transition-horizontal-slide-leave-active {
+	transition: opacity 0.2s linear, transform 0.2s ease;
+}
