@@ -206,7 +206,7 @@
 					top: 0;
 				}
 					@at-root #{&}__placeholder {
-						margin-left: -1px;
+						margin-left: -0.5px;
 
 						@at-root #{&}--hidden {
 							visibility: hidden;
