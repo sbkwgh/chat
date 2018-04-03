@@ -1,11 +1,45 @@
 <template>
 	<div class='new_conversation_input'>
-		<input placeholder="Enter someone's name" class='new_conversation_input__input'>
+		<div
+			class='new_conversation_input__input_bar'
+			:class='{ "new_conversation_input__input_bar--focus": inputFocused }'
+		>
+			<div class='new_conversation_input__selected_users'>
+				<div class='new_conversation_input__selected_user' v-for='user in selected'>
+					{{user.username}}
+				</div>
+			</div>
+			<div class='new_conversation_input__placeholders_input'>
+				<input
+					v-model='input'
+					placeholder="Enter someone's name"
+					class='new_conversation_input__input'
+					@keydown='inputHandler'
+					@focus='inputFocused = true;'
+					@blur='inputFocused = false;'
+				>
+				<div class='new_conversation_input__placeholders'>
+					<span
+						class='new_conversation_input__placeholder--hidden'
+					>
+						{{placeholders[0]}}
+					</span>
+					<span
+						class='new_conversation_input__placeholder'
+						v-if='placeholders[1]'
+					>
+						{{placeholders[1]}}
+					</span>
+				</div>
+			</div>
+		</div>
 		<transition name='transition-slide-fade'>
 			<div class='new_conversation_input__suggestions' v-if='suggestions.length'>
 				<div
 					class='new_conversation_input__suggestion_item'
+					tabindex='0'
 					v-for='suggestion in suggestions'
+					@click='addUser(suggestion)'
 				>
 					<div>
 						<div class='new_conversation_input__profile_picture'></div>
@@ -23,30 +57,140 @@
 		props: ['value'],
 		data () {
 			return {
-				suggestions: [
-					{ username: 'Username' },
-					{ username: 'Username' },
-					{ username: 'Username' },
-					{ username: 'Username' },
-					{ username: 'Username' },
-					{ username: 'Username' },
-					{ username: 'Username' }
-				]
+				input: '',
+				inputFocused: false,
+				suggestions_: [
+					{ username: 'Username1' },
+					{ username: 'Username2' },
+					{ username: 'Username3' },
+					{ username: 'Username4' },
+					{ username: 'Username5' },
+					{ username: 'Username6' },
+					{ username: 'Username7' }
+				],
+				selected: []
 			};
+		},
+		computed: {
+			suggestions () {
+				let regexp = new RegExp('^' + this.input, 'i')
+
+				return this.suggestions_.filter(v => {
+					let match = v.username.match(regexp);
+
+					return match && match[0].length;
+				});
+			},
+			placeholders () {
+				if(!this.suggestions.length) {
+					return ['', ''];
+				}
+
+				let firstSuggestion = this.suggestions[0].username;
+
+				return [
+					firstSuggestion.slice(0, this.input.length),
+					firstSuggestion.slice(this.input.length, firstSuggestion.length)
+				];
+			},
+		},
+		methods: {
+			inputHandler (e) {
+				if(e.keyCode === 9) {
+					e.preventDefault();
+					this.addUser();
+				} else if (
+					e.keyCode === 8 &&
+					!this.input.length &&
+					this.selected.length
+				) {
+					this.input = this.selected.pop().username;
+				}
+			},
+			addUser (user) {
+				if(user) {
+					this.selected.push(user);
+				} else if(this.suggestions.length) {
+					this.selected.push(this.suggestions[0]);
+				} else {
+					return;
+				}
+
+				this.input = '';
+			}
 		}
 	};
 </script>
 
 <style lang='scss' scoped>
 	@import '../assets/scss/variables.scss';
+	@import '../assets/scss/elements.scss';
 
 	.new_conversation_input {
 		position: relative;
 
-		@at-root #{&}__input {
-			padding: 1rem 0.5rem;
-			width: 20rem;
+		@at-root #{&}__input_bar {
+			@extend .input;
+
+			display: flex;
+			height: 2rem;
+			padding: 0 0.25rem;
+			padding-left: 0.125rem;
+			width: 30rem;
+			overflow-x: hidden;
+
+			@at-root #{&}--focus {
+				border-color: $gray-2;
+				box-shadow: 0 0 0 2px $gray-2;
+			}
 		}
+			@at-root #{&}__selected_users {
+				align-items: center;
+				display: flex;
+				font-weight: 300;
+				font-size: 0.85rem;
+				margin-right: 0.125rem;
+			}
+				@at-root #{&}__selected_user {
+					background-color: $gray-1;
+					border-radius: 0.25rem;
+					cursor: default;
+					font-size: 0.8rem;
+					height: 1.5rem;
+					line-height: 1.5rem;
+					margin: 0.125rem;
+					padding: 0 0.25rem;
+				}
+			@at-root #{&}__placeholders_input {
+				position: relative;
+				width: 100%;
+			}
+				@at-root #{&}__input {
+					border: 0;
+					font-family: $font-family;
+					font-weight: 300;
+					font-size: 0.85rem;
+					height: 100%;
+					width: 100%;
+				}
+				@at-root #{&}__placeholders {
+					align-items: center;
+					color: $gray-2;
+					display: flex;
+					font-size: 0.85rem;
+					height: 100%;
+					left: 1px;
+					pointer-events: none;
+					position: absolute;
+					top: 0;
+				}
+					@at-root #{&}__placeholder {
+						margin-left: -1px;
+
+						@at-root #{&}--hidden {
+							visibility: hidden;
+						}
+					}
 		@at-root #{&}__suggestions {
 			background-color: #fff;
 			border: thin solid $gray-2;
@@ -73,6 +217,7 @@
 			}
 			&:active, &:focus {
 				background-color: $gray-0;
+				outline: none;
 			}
 		}
 		@at-root #{&}__profile_picture {

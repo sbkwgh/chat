@@ -4,11 +4,11 @@
 			<form key='login' class='login__form' v-if='showLogin'>
 				<label>
 					<span>Username</span>
-					<input type='email'>
+					<input class='input' type='email'>
 				</label>
 				<label>
 					<span>Password</span>
-					<input type='password'>
+					<input class='input' type='password'>
 				</label>
 
 				<button class='button button--blue_border'>
@@ -28,15 +28,15 @@
 			<form key='account' class='login__form' v-else>
 				<label>
 					<span>Username</span>
-					<input type='email'>
+					<input class='input' type='email'>
 				</label>
 				<label>
 					<span>Password</span>
-					<input type='password'>
+					<input class='input' type='password'>
 				</label>
 				<label>
 					<span>Confirm password</span>
-					<input type='password'>
+					<input class='input' type='password'>
 				</label>
 
 				<button class='button button--blue_border'>

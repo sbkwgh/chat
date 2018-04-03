@@ -1,6 +1,6 @@
 @import './variables.scss';
 
-input, textarea {
+.input {
 	border: thin solid $gray-2;
 	border-radius: 0.25rem;
 	font-family: $font-family;
@@ -18,7 +18,7 @@ input, textarea {
 		box-shadow: 0 0 0 2px $gray-2;
 	}
 }
-textarea {
+.input--textarea {
 	border-radius: 0.25rem;
 	font-size: 0.85rem;
 	height: unset;
@@ -26,7 +26,7 @@ textarea {
 	resize: none;
 }
 
-button {
+.button {
 	background-color: #fff;
 	border: thin solid $gray-2;
 	border-radius: 0.25rem;

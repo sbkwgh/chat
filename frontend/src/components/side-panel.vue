@@ -4,12 +4,16 @@
 			<c-menu class='side_panel__username' :items='userMenu'>
 				Username <span>&#9660;</span>
 			</c-menu>
-			<button class='side_panel__add button--blue_border'>
+			<button class='side_panel__add button button--blue_border'>
 				New conversation
 			</button>
 		</div>
 		<div class='side_panel__search'>
-			<input type='text' placeholder='Search conversations and people' class='side_panel__search__input'>
+			<input
+				type='text'
+				placeholder='Search conversations and people'
+				class='input side_panel__search__input'
+			>
 		</div>
 		<div class='side_panel__conversations'>
 			<side-panel-conversation v-for='conversation in conversations'></side-panel-conversation>

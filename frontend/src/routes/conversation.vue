@@ -36,10 +36,10 @@
 		</div>
 		<div class='conversation__input_bar'>
 			<textarea
-				class='conversation__input'
+				class='input input--textarea conversation__input'
 				placeholder='Type your message here'
 			></textarea>
-			<button class='conversation__submit button--blue'>
+			<button class='conversation__submit button button--blue'>
 				Send
 			</button>
 		</div>
@@ -76,7 +76,7 @@
 					{ text: 'Report', event: 'report' }
 				],
 				showModal: false,
-				showNewConversationBar: false
+				showNewConversationBar: true
 			}
 		},
 		methods: {

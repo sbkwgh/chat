@@ -4,10 +4,10 @@
 			<slot></slot>
 		</div>
 		<div slot='footer'>
-			<button :class='buttonClass' @click='$emit("input", false); $emit("confirm")'>
+			<button class='button' :class='buttonClass' @click='$emit("input", false); $emit("confirm")'>
 				{{buttonText}}
 			</button>
-			<button @click='$emit("input", false)'>Cancel</button>
+			<button class='button' @click='$emit("input", false)'>Cancel</button>
 		</div>
 	</c-modal>
 </template>
