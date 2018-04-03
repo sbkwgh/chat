@@ -10,14 +10,7 @@
 
 	export default {
 		name: 'app-route',
-		components: { SidePanel },
-		beforeRouteEnter (to, from, next) {
-			next(vm => {
-				if(!vm.$store.state.username) {
-					vm.$router.push('/');
-				}
-			});
-		}
+		components: { SidePanel }
 	};
 </script>
 

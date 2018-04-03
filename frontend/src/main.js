@@ -4,8 +4,8 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 
 import App from './App';
-
-import store from './store/index.js';
+import store from './store';
+import getCookies from './lib/getCookies';
 
 //Routes
 import Login from './routes/login';
@@ -20,9 +20,27 @@ Vue.use(VueAxios, axios);
 const router = new VueRouter({
 	mode: 'history',
 	routes: [
-		{ path: '/', component: Login },
 		{
-			path: '/app', component: Index,
+			path: '/',
+			component: Login,
+			beforeEnter (to, from, next) {
+				if(getCookies().username) {
+					next('app');
+				} else {
+					next();
+				}
+			} 
+		},
+		{
+			path: '/app',
+			component: Index,
+			beforeEnter (to, from, next) {
+				if(!getCookies().username) {
+					next('/');
+				} else {
+					next();
+				}
+			},
 			children: [
 				{ path: '/', component: IndexPlaceholder },
 				{ path: 'conversation/:id', component: Conversation }

@@ -1,3 +1,5 @@
+import getCookies from '../lib/getCookies';
+
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -15,18 +17,6 @@ const store = new Vuex.Store({
 		}
 	}
 });
-
-function getCookies () {
-	let pairs = document.cookie.split(';').map(pair => pair.trim());
-	let obj = {};
-
-	pairs.forEach(pair => {
-		let [key, value] = pair.split('=');
-		obj[key] = value;
-	});
-
-	return obj;
-}
 
 const cookies = getCookies();
 if (cookies.username && cookies.id) {
