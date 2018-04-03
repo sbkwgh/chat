@@ -152,6 +152,7 @@
 				this.axios
 					.post('/api/user', { username, password })
 					.then(res => {
+						this.$store.commit('setUser', res.data);
 						this.$router.push('app');
 					})
 					.catch(res => {
@@ -174,6 +175,7 @@
 				this.axios
 					.post('/api/user/login', { username, password })
 					.then(res => {
+						this.$store.commit('setUser', res.data);
 						this.$router.push('app');
 					})
 					.catch(res => {
