@@ -41,9 +41,9 @@ router.post('/login', async (req, res, next) => {
 	} catch (e) { next(e); }
 });
 
-router.get('/:username_id', async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
 	try {
-		let user = await userController.get(req.params.username_id);
+		let user = await userController.get(+req.params.id);
 
 		res.json(user);
 	} catch (e) { next(e) };
