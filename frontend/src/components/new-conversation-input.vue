@@ -38,7 +38,7 @@
 			<div class='new_conversation_input__suggestions' v-if='suggestions.length'>
 				<div
 					class='new_conversation_input__suggestion_item'
-					:class='{ "new_conversation_input__suggestion_item--focus": focusedSuggestion === $index }'
+					:class='{ "new_conversation_input__suggestion_item--focus": focusedSuggestionIndex === $index }'
 					tabindex='0'
 					v-for='(suggestion, $index) in suggestions'
 					@click='addUser(suggestion)'
@@ -61,7 +61,7 @@
 			return {
 				input: '',
 				inputFocused: false,
-				suggestions_: [
+				suggestionsData: [
 					{ username: 'Username1' },
 					{ username: 'Username2' },
 					{ username: 'Username3' },
@@ -71,25 +71,31 @@
 					{ username: 'Username7' }
 				],
 				selected: [],
-				focusedSuggestion: null
+				focusedSuggestionIndex: null
 			};
 		},
 		computed: {
 			suggestions () {
 				let regexp = new RegExp('^' + this.input, 'i')
 
-				return this.suggestions_.filter(v => {
+				return this.suggestionsData.filter(v => {
 					let match = v.username.match(regexp);
 
 					return match && match[0].length && !this.selected.includes(v);
 				});
 			},
+			selectedSuggestionIndex () {
+				if(this.focusedSuggestionIndex !== null) {
+					return this.focusedSuggestionIndex;
+				} else {
+					return 0;
+				}
+			},
 			placeholders () {
 				if(!this.suggestions.length) {
 					return ['', ''];
 				}
-
-				let firstSuggestion = this.suggestions[0].username;
+				let firstSuggestion = this.suggestions[this.selectedSuggestionIndex].username;
 
 				return [
 					firstSuggestion.slice(0, this.input.length),
@@ -99,43 +105,51 @@
 		},
 		methods: {
 			inputHandler (e) {
-				if(e.keyCode === 9 || e.keyCode === 32) {
+				//tab, space or enter
+				if([9, 32, 13].indexOf(e.keyCode) > -1) {
 					e.preventDefault();
 					this.addUser();
+				//backspace
 				} else if (
 					e.keyCode === 8 &&
 					!this.input.length &&
 					this.selected.length
 				) {
 					this.input = this.selected.pop().username;
+				//Down
 				} else if(e.keyCode === 40) {
 					this.setSelectionFocus(1);
+				//Up
 				} else if(e.keyCode === 38) {
 					this.setSelectionFocus(-1);
-				} else if (e.keyCode === 13 && this.focusedSuggestion !== null) {
-					this.addUser(this.suggestions[this.focusedSuggestion]);
-					this.focusedSuggestion = null;
 				}
 			},
 			setSelectionFocus (direction) {
-				if(!this.suggestions.length) return;
+				let index = this.focusedSuggestionIndex;
+				let length = this.suggestions.length;
+				
+				if(!length) return;
 
-				if(this.focusedSuggestion !== null) {
-					this.focusedSuggestion = (this.focusedSuggestion + 1*direction) % this.suggestions.length;
-				} else if (direction === 1 && this.focusedSuggestion === null) {
-					this.focusedSuggestion = 0;
+				if(index !== null) {
+					let newIndex = (index + 1*direction) % length;
+					this.focusedSuggestionIndex = (newIndex > 0) ? newIndex : null;
+				} else if (direction === 1 && index === null) {
+					this.focusedSuggestionIndex = 0;
 				}
 			},
 			addUser (user) {
 				if(user) {
 					this.selected.push(user);
 				} else if(this.suggestions.length) {
-					this.selected.push(this.suggestions[0]);
+					this.selected.push(
+						this.suggestions[this.selectedSuggestionIndex]
+					);
 				} else {
 					return;
 				}
 
 				this.input = '';
+				this.focusedSuggestionIndex = null;
 				this.$refs.input.focus();
 			}
 		}
