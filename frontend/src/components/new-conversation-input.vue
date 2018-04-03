@@ -11,6 +11,7 @@
 			</div>
 			<div class='new_conversation_input__placeholders_input'>
 				<input
+					ref='input'
 					v-model='input'
 					placeholder="Enter someone's name"
 					class='new_conversation_input__input'
@@ -117,6 +118,7 @@
 				}
 
 				this.input = '';
+				this.$refs.input.focus();
 			}
 		}
 	};
@@ -171,6 +173,7 @@
 					font-weight: 300;
 					font-size: 0.85rem;
 					height: 100%;
+					outline: none;
 					width: 100%;
 				}
 				@at-root #{&}__placeholders {
