@@ -62,13 +62,13 @@
 				input: '',
 				inputFocused: false,
 				suggestionsData: [
-					{ username: 'Username1' },
-					{ username: 'Username2' },
-					{ username: 'Username3' },
-					{ username: 'Username4' },
+					{ username: 'jackdoe' },
+					{ username: 'jackall' },
+					{ username: 'jack.23' },
+					{ username: 'User' },
+					{ username: 'Username' },
 					{ username: 'Username5' },
-					{ username: 'Username6' },
-					{ username: 'Username7' }
+					{ username: 'Username55' }
 				],
 				selected: [],
 				focusedSuggestionIndex: null
