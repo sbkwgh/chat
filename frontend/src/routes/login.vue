@@ -4,7 +4,7 @@
 			<form key='login' class='login__form' v-if='showLogin'>
 				<label>
 					<span>Username</span>
-					<input class='input' type='email'>
+					<input class='input'>
 				</label>
 				<label>
 					<span>Password</span>
@@ -28,7 +28,7 @@
 			<form key='account' class='login__form' v-else>
 				<label>
 					<span>Username</span>
-					<input class='input' type='email'>
+					<input class='input'>
 				</label>
 				<label>
 					<span>Password</span>
