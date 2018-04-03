@@ -40,6 +40,35 @@ exports.get = async function () {
 	}
 }
 
+exports.getAllBeginningWith = async function (username) {
+	if(typeof username !== 'string') {
+		throw validationError(sequelize, {
+			message: 'Username must be a string',
+			value: username
+		});
+	}
+
+	let users = await User.findAll({
+		attributes: { exclude: ['hash'] },
+		where: {
+			username: {
+				[sequelize.Op.like]: username + '%'
+			}
+		},
+		limit: 10
+	});
+
+	let sorted = users.sort((a, b) => {
+		if(a.username.length !== b.username.length) {
+			return a.username.length > b.username.length
+		} else {
+			return a.username.localeCompare(b.username);
+		}
+	});
+
+	return sorted.map(user => user.toJSON());
+}
+
 exports.login = async function (username, password) {
 	let user = await User.findOne({ 
 		where: { username }

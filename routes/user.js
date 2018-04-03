@@ -49,6 +49,14 @@ router.get('/:username_id', async (req, res, next) => {
 	} catch (e) { next(e) };
 });
 
+router.get('/search/:username', async (req, res, next) => {
+	try {
+		let users = await userController.getAllBeginningWith(req.params.username);
+
+		res.json(users);
+	} catch (e) { next(e) };
+});
+
 router.all('*', (req, res, next) => {
 	if(!req.session.authenticated) {
 		res.status(401);

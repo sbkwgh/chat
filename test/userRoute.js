@@ -119,4 +119,14 @@ describe('User route', () => {
 				})
 		})
 	});
+
+	describe('GET /search/:username', () => {
+		it('should return a list of users', async () => {
+			let res = await chai.request(server)
+				.get('/api/user/search/username');
+
+			res.body.should.have.property('length', 1);
+			res.body[0].username.should.equal('username');
+		});
+	});
 })

@@ -160,4 +160,35 @@ describe('User controller', () => {
 			}
 		});
 	})
+
+	describe('controller: getAllBeginningWith', () => {
+		before(async () => {
+			await userController.create('john_abc', 'password');
+			await userController.create('john_abd', 'password');
+			await userController.create('john_z', 'password');
+		})
+
+		it('should get a list of users beginning with the string', async () => {
+			let users = await userController.getAllBeginningWith('john');
+
+			users.length.should.equal(3);
+
+			users[0].username.should.equal('john_z');
+			users[1].username.should.equal('john_abc');
+			users[2].username.should.equal('john_abd');
+		});
+		it('should get return an empty string if no users exist', async () => {
+			let users = await userController.getAllBeginningWith('123456yuhjnbvcxsawe456');
+			users.length.should.equal(0);
+		});
+		it('should return an error if no string provided', async () => {
+			try {
+				let users = await userController.getAllBeginningWith([]);
+
+				expect(true).to.be.false;
+			} catch (e) {
+				e.errors.should.contain.something.with.property('message', 'Username must be a string');
+			}
+		});
+	})
 })
