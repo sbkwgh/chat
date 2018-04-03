@@ -13,7 +13,7 @@
 				<input
 					ref='input'
 					v-model='input'
-					placeholder="Enter someone's name"
+					placeholder="Enter a username"
 					class='new_conversation_input__input'
 					@keydown='inputHandler'
 					@focus='inputFocused = true;'
@@ -81,7 +81,7 @@
 				return this.suggestions_.filter(v => {
 					let match = v.username.match(regexp);
 
-					return match && match[0].length;
+					return match && match[0].length && !this.selected.includes(v);
 				});
 			},
 			placeholders () {
@@ -99,7 +99,7 @@
 		},
 		methods: {
 			inputHandler (e) {
-				if(e.keyCode === 9) {
+				if(e.keyCode === 9 || e.keyCode === 32) {
 					e.preventDefault();
 					this.addUser();
 				} else if (
