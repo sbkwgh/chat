@@ -1,14 +1,20 @@
 <template>
 	<div class='login'>
 		<transition name='transition-horizontal-slide' mode='out-in'>
-			<form key='login' class='login__form' v-if='showLogin'>
+			<form key='login' class='login__form' @submit.prevent='doLogin' v-if='showLogin'>
 				<label>
 					<span>Username</span>
-					<input class='input'>
+					<input class='input' v-model='login.username'>
+					<span class='error' v-if='login.errors.username'>
+						{{login.errors.username}}
+					</span>
 				</label>
 				<label>
 					<span>Password</span>
-					<input class='input' type='password'>
+					<input class='input' type='password' v-model='login.password'>
+					<span class='error' v-if='login.errors.hash'>
+						{{login.errors.hash}}
+					</span>
 				</label>
 
 				<button class='button button--blue_border'>
@@ -25,18 +31,27 @@
 					</span>
 				</div>
 			</form>
-			<form key='account' class='login__form' v-else>
+			<form key='account' class='login__form' @submit.prevent='create' v-else>
 				<label>
 					<span>Username</span>
-					<input class='input'>
+					<input class='input' v-model='createAccount.username'>
+					<span class='error' v-if='createAccount.errors.username'>
+						{{createAccount.errors.username}}
+					</span>
 				</label>
 				<label>
 					<span>Password</span>
-					<input class='input' type='password'>
+					<input class='input' type='password' v-model='createAccount.password'>
+					<span class='error' v-if='createAccount.errors.hash'>
+						{{createAccount.errors.hash}}
+					</span>
 				</label>
 				<label>
 					<span>Confirm password</span>
-					<input class='input' type='password'>
+					<input class='input' type='password' v-model='createAccount.confirmPassword'>
+					<span class='error' v-if='createAccount.errors.confirmPassword'>
+						{{createAccount.errors.confirmPassword}}
+					</span>
 				</label>
 
 				<button class='button button--blue_border'>
@@ -61,7 +76,110 @@
 		name: 'login',
 		data () {
 			return {
-				showLogin: true
+				showLogin: true,
+
+				login: {
+					username: '',
+					password: '',
+
+					errors: {
+						username: null,
+						hash: null
+					}
+				},
+
+				createAccount: {
+					username: '',
+					password: '',
+					confirmPassword: '',
+
+					errors: {
+						username: null,
+						hash: null,
+						confirmPassword: null
+					}
+				}
+			}
+		},
+		methods: {
+			setErrors (form, params) {
+				let errorsExist = false;
+
+				for(let key in this[form].errors) {
+					if(!params || !params[key]) {
+						this[form].errors[key] = null;
+					} else {
+						this[form].errors[key] = params[key];
+						errorsExist = true;
+					}
+				}
+
+				return errorsExist;
+			},
+			setApiErrors (form, errors) {
+				let formErrors = {};
+				let alertErrors = [];
+
+				for(let error of errors) {
+					let path = error.path;
+					let message = error.message;
+
+					if(path && this[form].errors[path] !== undefined) {
+						formErrors[path] = message;
+					} else {
+						alertErrors.push(message);
+					}
+				}
+
+				this.setErrors(form, formErrors);
+				return alertErrors;
+			},
+			create () {
+				let username = this.createAccount.username.trim();
+				let password = this.createAccount.password;
+				let confirmPassword = this.createAccount.confirmPassword;
+
+				let errors = {};
+				if(!username.length) {
+					errors.username = 'Username can\'t be empty';
+				} if(password !== confirmPassword) {
+					errors.confirmPassword = 'Passwords don\'t match';
+				} if(password.length < 8) {
+					errors.hash = 'Password must be at least 8 characters'
+				}
+				if (this.setErrors('createAccount', errors)) return;
+
+				this.axios
+					.post('/api/user', { username, password })
+					.then(res => {
+						this.$router.push('app');
+					})
+					.catch(res => {
+						let errors = res.response.data.errors;
+						this.setApiErrors('createAccount', errors);
+					});
+			},
+			doLogin () {
+				let username = this.login.username.trim();
+				let password = this.login.password;
+
+				let errors = {};
+				if(!username.length) {
+					errors.username = 'Username can\'t be empty';
+				} if(!password.length) {
+					errors.hash = 'Password can\'t be empty';
+				}
+				if (this.setErrors('login', errors)) return;
+
+				this.axios
+					.post('/api/user/login', { username, password })
+					.then(res => {
+						this.$router.push('app');
+					})
+					.catch(res => {
+						let errors = res.response.data.errors;
+						this.setApiErrors('login', errors);
+					});
 			}
 		}
 	};
@@ -95,6 +213,10 @@
 				color: $text-secondary;
 				font-size: 0.85rem;	
 				margin-bottom: 0.25rem;
+			}
+			label span.error {
+				color: $red-4;
+				font-weight: 300;
 			}
 
 			input {

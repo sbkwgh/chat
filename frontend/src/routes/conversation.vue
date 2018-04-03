@@ -76,7 +76,7 @@
 					{ text: 'Report', event: 'report' }
 				],
 				showModal: false,
-				showNewConversationBar: true
+				showNewConversationBar: false
 			}
 		},
 		methods: {
