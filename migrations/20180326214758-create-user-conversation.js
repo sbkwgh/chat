@@ -1,17 +1,11 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('user_conversation', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
+    return queryInterface.createTable('userconversations', {
+      UserId: {
         type: Sequelize.INTEGER
       },
-      userId: {
-        type: Sequelize.INTEGER
-      },
-      conversationId: {
+      ConversationId: {
         type: Sequelize.INTEGER
       },
       createdAt: {

@@ -18,7 +18,7 @@ module.exports = {
       UserId: {
         type: Sequelize.INTEGER
       },
-      conversationId: {
+      ConversationId: {
         type: Sequelize.INTEGER
       },
       createdAt: {
