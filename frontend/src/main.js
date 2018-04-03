@@ -5,6 +5,8 @@ import VueAxios from 'vue-axios';
 
 import App from './App';
 
+import store from './store/index.js';
+
 //Routes
 import Login from './routes/login';
 import Index from './routes/index';
@@ -30,6 +32,7 @@ const router = new VueRouter({
 });
 
 new Vue({
+	store,
 	router,
 	render: h => h(App)
 }).$mount('#app');

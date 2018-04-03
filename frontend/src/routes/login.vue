@@ -181,6 +181,13 @@
 						this.setApiErrors('login', errors);
 					});
 			}
+		},
+		beforeRouteEnter (to, from, next) {
+			next(vm => {
+				if(vm.$store.state.username) {
+					vm.$router.push('app');
+				}
+			});
 		}
 	};
 </script>
