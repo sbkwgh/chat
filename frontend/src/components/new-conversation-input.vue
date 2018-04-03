@@ -38,8 +38,9 @@
 			<div class='new_conversation_input__suggestions' v-if='suggestions.length'>
 				<div
 					class='new_conversation_input__suggestion_item'
+					:class='{ "new_conversation_input__suggestion_item--focus": focusedSuggestion === $index }'
 					tabindex='0'
-					v-for='suggestion in suggestions'
+					v-for='(suggestion, $index) in suggestions'
 					@click='addUser(suggestion)'
 				>
 					<div>
@@ -69,7 +70,8 @@
 					{ username: 'Username6' },
 					{ username: 'Username7' }
 				],
-				selected: []
+				selected: [],
+				focusedSuggestion: null
 			};
 		},
 		computed: {
@@ -106,6 +108,22 @@
 					this.selected.length
 				) {
 					this.input = this.selected.pop().username;
+				} else if(e.keyCode === 40) {
+					this.setSelectionFocus(1);
+				} else if(e.keyCode === 38) {
+					this.setSelectionFocus(-1);
+				} else if (e.keyCode === 13 && this.focusedSuggestion !== null) {
+					this.addUser(this.suggestions[this.focusedSuggestion]);
+					this.focusedSuggestion = null;
+				}
+			},
+			setSelectionFocus (direction) {
+				if(!this.suggestions.length) return;
+
+				if(this.focusedSuggestion !== null) {
+					this.focusedSuggestion = (this.focusedSuggestion + 1*direction) % this.suggestions.length;
+				} else if (direction === 1 && this.focusedSuggestion === null) {
+					this.focusedSuggestion = 0;
 				}
 			},
 			addUser (user) {
@@ -217,6 +235,9 @@
 
 			&:hover {
 				background-color: $gray-hover;
+			}
+			@at-root #{&}--focus {
+				background-color: $gray-0;
 			}
 			&:active, &:focus {
 				background-color: $gray-0;
