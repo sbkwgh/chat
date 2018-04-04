@@ -15,8 +15,10 @@
 
 <style lang='scss' scoped>
 	.index {
-		display: flex;
 		align-items: center;
+		cursor: default;
+		display: flex;
 		justify-content: center;
+		user-select: none;
 	}
 </style>

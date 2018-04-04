@@ -1,18 +1,19 @@
 <template>
-	<div class='side_panel_conversation'>
+	<div class='side_panel_conversation' @click='$router.push("/app/conversation/" + conversation.id)'>
 		<div>
 			<div class='side_panel_conversation__profile_picture'></div>
 		</div>
 		<div class='side_panel_conversation__conversation_content'>
-			<div class='side_panel_conversation__name'>Username here</div>
-			<div class='side_panel_conversation__snippet'>Snippet here some text by someone</div>
+			<div class='side_panel_conversation__name'>{{conversation.Messages[0].Users.username}}</div>
+			<div class='side_panel_conversation__snippet'>{{conversation.Messages[0].content}}</div>
 		</div>
 	</div>
 </template>
 
 <script>
 	export default {
-		name: 'side-panel-conversation'
+		name: 'side-panel-conversation',
+		props: ['conversation']
 	};
 </script>
 

@@ -2,7 +2,7 @@
 	<div class='side_panel'>
 		<div class='side_panel__header'>
 			<c-menu class='side_panel__username' :items='userMenu'>
-				Username <span>&#9660;</span>
+				{{$store.state.username}} <span>&#9660;</span>
 			</c-menu>
 			<button class='side_panel__add button button--blue_border'>
 				New conversation
@@ -15,8 +15,15 @@
 				class='input side_panel__search__input'
 			>
 		</div>
-		<div class='side_panel__conversations'>
+		<div
+			class='side_panel__conversations'
+			:class='{ "side_panel__conversations--empty": !conversations.length }'
+		>
 			<side-panel-conversation v-for='conversation in conversations' :conversation='conversation'></side-panel-conversation>
+
+			<div v-if='!conversations.length'>
+				No conversations
+			</div>
 		</div>
 	</div>
 </template>
@@ -98,6 +105,15 @@
 			border-top: thin solid $gray-1;
 			max-height: 100%;
 			overflow-y: auto;
+
+			@at-root #{&}--empty {
+				align-items: center;
+				cursor: default;
+				display: flex;
+				height: 100%;
+				justify-content: center;
+				user-select: none;
+			}
 		}
 	}
 </style>
