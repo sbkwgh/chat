@@ -1,6 +1,6 @@
 <template>
 	<div id='app'>
-		<c-modal :value='$store.state.errors' @input='$store.commit("setErrors", null)'>
+		<c-modal :value='showErrorModal' @input='clearErrors'>
 			<div slot='main'>
 				<template v-for='error in $store.state.errors'>
 					{{error}}
@@ -8,7 +8,7 @@
 				</template>
 			</div>
 			<div slot='footer'>
-				<button class='button' @click='$store.commit("setErrors", null)'>OK</button>
+				<button class='button' @click='clearErrors'>OK</button>
 			</div>
 		</c-modal>
 
@@ -24,6 +24,25 @@ export default {
 	name: 'app',
 	components: {
 		CModal
+	},
+	data () {
+		return {
+			showErrorModal: false
+		}
+	},
+	methods: {
+		clearErrors () {
+			this.showErrorModal = false;
+
+			setTimeout(() => {
+				this.$store.commit('setErrors', null);
+			}, 200);
+		}
+	},
+	watch: {
+		'$store.state.errors': function () {
+			this.showErrorModal = !!this.$store.state.errors;
+		}
 	}
 };
 </script>
