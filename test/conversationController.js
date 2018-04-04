@@ -99,26 +99,6 @@ describe('Conversation controller', () => {
 		});
 	});
 	describe('getFromUser', () => {
-		it('should return a list of conversations', async () => {
-			let res = await conversationController.getFromUser(1);
-			res.should.have.length(2);
-			res.should.contain.something.with.property('name', 'user_one, user_two');
-			res.should.contain.something.with.property('name', 'group name');
-		});
-		it('should return [] from a non-existent user', async () => {
-			let res = await conversationController.getFromUser(10);
-			res.should.have.length(0);
-		});
-		it('should return an error from with an invalid datatype', async () => {
-			try {
-				await conversationController.getFromUser({});
-			} catch (e) {
-				e.errors.should.contain.something.with.property('message', 'Parameter must be of type number');
-			}
-		});
-	});
-
-	describe('get', () => {
 		before(async () => {
 			await messageController.create({
 				userId: 1,
@@ -137,6 +117,26 @@ describe('Conversation controller', () => {
 			});
 		});
 
+
+		it('should return a list of conversations', async () => {
+			let res = await conversationController.getFromUser(1);
+			res.should.have.length(2);
+
+			res[0].should.have.property('name', 'user_one, user_two');
+			res[0].Users.should.contain.something.with.property('username', 'user_one');
+			res[0].Users.should.contain.something.with.property('username', 'user_two');
+			res[0].Messages[0].should.have.property('content', 'message 3');
+			res[0].Messages.should.have.length(1);
+
+			res[1].should.have.property('name', 'group name');
+		});
+		it('should return [] from a non-existent user', async () => {
+			let res = await conversationController.getFromUser(10);
+			res.should.have.length(0);
+		});
+	});
+
+	describe('get', () => {
 		it('should get conversation and messages', async () => {
 			let conversation = await conversationController.get(1, 1);
 			

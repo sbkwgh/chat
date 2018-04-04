@@ -49,14 +49,53 @@ exports.create = async function (userIds, name) {
 };
 
 exports.getFromUser = async function (userId) {
+	/*
+		Should return an object like:
+	
+		{
+			name,
+			createdAt,
+			updatedAt,
+			id,
+
+			Users: [ ... ],
+			Messages: [ ... ]
+		}
+
+	*/
+
 	let conversations = await Conversation.findAll({
-		include: [{
-			model: User,
-			where: { id: Type.number(userId) }
-		}]
+		include: [
+			{
+				model: User,
+				where: { id: userId },
+				attributes: { exclude: ['hash'] }
+			},
+			{
+				model: Message,
+				limit: 1,
+				order: [
+					['id', 'DESC']
+				]
+			}
+		],
+		order: [
+			['updatedAt', 'DESC']
+		]
 	});
 
-	return conversations.map(c => c.toJSON());
+	let conversationsWithUsers = conversations.map(async conversation => {
+		let withUsers = await Conversation.findById(conversation.id, {
+			include: [User]
+		});
+
+		let json = conversation.toJSON();
+		json.Users = withUsers.Users;
+
+		return json;
+	});
+
+	return await Promise.all(conversationsWithUsers);
 };
 
 exports.get = async function (userId, conversationId) {

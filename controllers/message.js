@@ -34,6 +34,7 @@ exports.create = async function (params) {
 	let message = await Message.create({ content });
 	await message.setUser(user);
 	await message.setConversation(conversation);
+	await Conversation.update({ updatedAt: new Date() }, { where: { id: conversationId } });
 
 	return message;
 }
