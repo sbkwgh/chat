@@ -1,16 +1,29 @@
 <template>
 	<div id='app'>
+		<c-modal :value='$store.state.errors' @input='$store.commit("setErrors", null)'>
+			<div slot='main'>
+				<template v-for='error in $store.state.errors'>
+					{{error}}
+					<br/>
+				</template>
+			</div>
+			<div slot='footer'>
+				<button class='button' @click='$store.commit("setErrors", null)'>OK</button>
+			</div>
+		</c-modal>
+
 		<router-view></router-view>
 	</div>
 </template>
 
 <script>
-	import SidePanel from './components/side-panel';
+
+	import CModal from './components/c-modal';
 
 export default {
 	name: 'app',
 	components: {
-		SidePanel
+		CModal
 	}
 };
 </script>

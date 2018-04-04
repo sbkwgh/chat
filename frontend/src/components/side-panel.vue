@@ -16,7 +16,7 @@
 			>
 		</div>
 		<div class='side_panel__conversations'>
-			<side-panel-conversation v-for='conversation in conversations'></side-panel-conversation>
+			<side-panel-conversation v-for='conversation in conversations' :conversation='conversation'></side-panel-conversation>
 		</div>
 	</div>
 </template>
@@ -33,12 +33,22 @@
 		},
 		data () {
 			return {
-				conversations: (new Array(10)).fill(0),
+				conversations: [],
 				userMenu: [
 					{ text: 'Settings', event: 'settings' },
 					{ text: 'Log out', event: 'logout' }
 				]
 			};
+		},
+		mounted () {
+			this.axios
+				.get('/api/user/' + this.$store.state.userId + '/conversations')
+				.then(res => {
+					this.conversations = res.data;
+				})
+				.catch(e => {
+					this.$store.commit('setErrors', e.response.data.errors);
+				});
 		}
 	};
 </script>

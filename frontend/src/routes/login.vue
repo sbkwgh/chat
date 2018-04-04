@@ -127,11 +127,12 @@
 					if(path && this[form].errors[path] !== undefined) {
 						formErrors[path] = message;
 					} else {
-						alertErrors.push(message);
+						alertErrors.push(error);
 					}
 				}
 
 				this.setErrors(form, formErrors);
+				this.$store.commit('setErrors', alertErrors);
 				return alertErrors;
 			},
 			create () {
