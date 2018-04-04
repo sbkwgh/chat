@@ -126,6 +126,7 @@ describe('Conversation controller', () => {
 			res[0].Users.should.contain.something.with.property('username', 'user_one');
 			res[0].Users.should.contain.something.with.property('username', 'user_two');
 			res[0].Messages[0].should.have.property('content', 'message 3');
+			res[0].Messages[0].User.should.have.property('username', 'user_one');
 			res[0].Messages.should.have.length(1);
 		});
 		it('should return [] from a non-existent user', async () => {

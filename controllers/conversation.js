@@ -76,6 +76,12 @@ exports.getFromUser = async function (userId) {
 				limit: 1,
 				order: [
 					['id', 'DESC']
+				],
+				include: [
+					{
+						model: User,
+						attributes: { exclude: [ 'hash' ] }
+					} 
 				]
 			}
 		],
