@@ -120,15 +120,13 @@ describe('Conversation controller', () => {
 
 		it('should return a list of conversations', async () => {
 			let res = await conversationController.getFromUser(1);
-			res.should.have.length(2);
 
+			res.should.have.length(1);
 			res[0].should.have.property('name', 'user_one, user_two');
 			res[0].Users.should.contain.something.with.property('username', 'user_one');
 			res[0].Users.should.contain.something.with.property('username', 'user_two');
 			res[0].Messages[0].should.have.property('content', 'message 3');
 			res[0].Messages.should.have.length(1);
-
-			res[1].should.have.property('name', 'group name');
 		});
 		it('should return [] from a non-existent user', async () => {
 			let res = await conversationController.getFromUser(10);

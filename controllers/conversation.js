@@ -84,7 +84,7 @@ exports.getFromUser = async function (userId) {
 		]
 	});
 
-	let conversationsWithUsers = conversations.map(async conversation => {
+	let conversationsWithUsersPromises = conversations.map(async conversation => {
 		let withUsers = await Conversation.findById(conversation.id, {
 			include: [User]
 		});
@@ -94,8 +94,9 @@ exports.getFromUser = async function (userId) {
 
 		return json;
 	});
+	let jsonConversations = await Promise.all(conversationsWithUsersPromises);
 
-	return await Promise.all(conversationsWithUsers);
+	return jsonConversations.filter(c => c.Messages.length);
 };
 
 exports.get = async function (userId, conversationId) {
