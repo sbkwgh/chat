@@ -1,7 +1,11 @@
 <template>
 	<div class='side_panel'>
 		<div class='side_panel__header'>
-			<c-menu class='side_panel__username' :items='userMenu'>
+			<c-menu
+				class='side_panel__username'
+				:items='userMenu'
+				@logout='logout'
+			>
 				{{$store.state.username}} <span>&#9660;</span>
 			</c-menu>
 			<button
@@ -49,6 +53,19 @@
 					{ text: 'Log out', event: 'logout' }
 				]
 			};
+		},
+		methods: {
+			logout () {
+				this.axios
+					.post('/api/user/logout')
+					.then(() => {
+						this.$store.commit('setUser', { id: null, username: null });
+						this.$router.push('/');
+					})
+					.catch(e => {
+						this.$store.commit('setErrors', e.response.data.errors);
+					});
+			}
 		},
 		mounted () {
 			this.axios

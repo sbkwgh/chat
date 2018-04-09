@@ -9,7 +9,7 @@ function setSession (req, res, user) {
 	res.cookie('username', user.username);
 	res.cookie('id', user.id);
 }
-function clearSession (req) {
+function clearSession (req, res) {
 	req.session.destroy();
 	res.clearCookie('username');
 	res.clearCookie('id');
@@ -38,6 +38,13 @@ router.post('/login', async (req, res, next) => {
 		setSession(req, res, user);
 
 		res.json(user);
+	} catch (e) { next(e); }
+});
+
+router.post('/logout', async (req, res, next) => {
+	try {
+		clearSession(req, res);
+		res.send({ success: true });
 	} catch (e) { next(e); }
 });
 

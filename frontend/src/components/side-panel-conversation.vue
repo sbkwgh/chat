@@ -43,14 +43,14 @@
 		transition: background-color 0.2s;
 		width: 100%;
 
-		&::hover {
+		&:hover {
 			background-color: $gray-hover;
 		}
 
 		@at-root #{&}--selected {
 			background-color: $gray-hover;
 
-			&:after {
+			&::after {
 				background-color: $gray-4;
 				content: '';
 				height: 100%;
