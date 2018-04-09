@@ -26,7 +26,11 @@
 			class='side_panel__conversations'
 			:class='{ "side_panel__conversations--empty": !conversations.length }'
 		>
-			<side-panel-conversation v-for='conversation in conversations' :conversation='conversation'></side-panel-conversation>
+			<side-panel-conversation
+				v-for='conversation in conversations'
+				:conversation='conversation'
+				tabindex='0'
+			></side-panel-conversation>
 
 			<div v-if='!conversations.length'>
 				No conversations

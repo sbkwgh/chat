@@ -2,7 +2,8 @@
 	<div
 		class='side_panel_conversation'
 		:class='{ "side_panel_conversation--selected": selected }'
-		@click='$router.push("/app/conversation/" + conversation.id)'
+		@click='goToConversation'
+		@keydown.enter='goToConversation'
 	>
 		<div>
 			<div class='side_panel_conversation__profile_picture'></div>
@@ -25,6 +26,11 @@
 					+this.$route.params.id === this.conversation.id
 				);
 			}
+		},
+		methods: {
+			goToConversation () {
+				this.$router.push("/app/conversation/" + this.conversation.id);
+			}
 		}
 	};
 </script>
@@ -43,7 +49,7 @@
 		transition: background-color 0.2s;
 		width: 100%;
 
-		&:hover {
+		&:hover, &:focus {
 			background-color: $gray-hover;
 		}
 
