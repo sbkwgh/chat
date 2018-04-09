@@ -73,6 +73,9 @@
 		@at-root #{&}__snippet {
 			color: $text-secondary;
 			font-weight: 300;
+			height: 2.5rem;
+			overflow-y: hidden;
+			word-break: break-all;
 		}
 	}
 </style>
