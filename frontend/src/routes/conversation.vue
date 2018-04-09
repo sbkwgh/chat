@@ -125,6 +125,7 @@
 						.then(res => {
 							res.data.User = { username: this.$store.state.username }
 							this.messages.push(res.data);
+							this.input = '';
 						})
 						.catch(e => {
 							this.$store.commit('setErrors', e.response.data.errors);
@@ -142,6 +143,7 @@
 								name: 'conversation',
 								params: { id: res.data.id }
 							});
+							this.sendMessage();
 						})
 						.catch(e => {
 							this.$store.commit('setErrors', e.response.data.errors);
