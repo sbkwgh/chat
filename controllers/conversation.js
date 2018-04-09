@@ -129,12 +129,18 @@ exports.get = async function (userId, conversationId) {
 		]
 	});
 
-
 	if(!conversation) {
 		throw validationError(Sequelize, {
 			message: 'Either the conversation doesn\'t exist or you\'re not part of the conversation'
 		});
 	} else {
-		return conversation.toJSON();
+		let conversationUsers = await Conversation.findById(conversationId, {
+			include: [User]
+		});
+
+		let json = conversation.toJSON();
+		json.Users = conversationUsers.Users.map(u => u.toJSON());
+
+		return json;
 	}
 };

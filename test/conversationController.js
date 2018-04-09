@@ -140,6 +140,8 @@ describe('Conversation controller', () => {
 			let conversation = await conversationController.get(1, 1);
 			
 			conversation.name.should.equal('user_one, user_two');
+			conversation.Users.should.contain.something.with.property('username', 'user_one');
+			conversation.Users.should.contain.something.with.property('username', 'user_two');
 			conversation.Messages.length.should.equal(3);
 
 			conversation.Messages[0].should.have.property('content', 'message 1');
