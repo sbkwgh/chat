@@ -32,8 +32,8 @@
 		<div class='conversation__main'>
 			<conversation-message
 				v-for='message in messages'
-				:message='message.content'
-				:self='message.User.username === $store.state.username'
+				:message='message'
+				:users='users'
 			></conversation-message>
 		</div>
 		<div class='conversation__input_bar'>
@@ -73,6 +73,7 @@
 			return {
 				name: '',
 				messages: [],
+				users: [],
 				id: null,
 				input: '',
 
@@ -101,6 +102,7 @@
 						.then(res => {
 							this.showModal = false;
 							this.messages = res.data.Messages;
+							this.users = res.data.Users;
 							this.name = res.data.name;
 							this.id = res.data.id;
 						})
