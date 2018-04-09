@@ -16,10 +16,13 @@
 				key='new-conversation'
 				v-if='showNewConversationBar'
 			>
-				<new-conversation-input class='conversation__new_conversation_input'></new-conversation-input>
+				<new-conversation-input
+					class='conversation__new_conversation_input'
+					@input='selected => { newConversationUsers = selected }'
+				></new-conversation-input>
 			</div>
 			<div class='conversation__header' key='header' v-else>
-				<div class='conversation__title'>Title</div>
+				<div class='conversation__title'>{{name}}</div>
 				<div class='conversation__actions'>
 					<c-menu :items='settingsItems' @delete='showModal = true'>Settings</c-menu>
 				</div>
@@ -29,17 +32,21 @@
 		<div class='conversation__main'>
 			<conversation-message
 				v-for='message in messages'
-				:message='message.message'
-				:self='message.self'
+				:message='message.content'
+				:self='message.User.username === $store.state.username'
 			></conversation-message>
-			<conversation-time-break :date='new Date()'></conversation-time-break>
 		</div>
 		<div class='conversation__input_bar'>
 			<textarea
 				class='input input--textarea conversation__input'
 				placeholder='Type your message here'
+				@keydown.enter.prevent='sendMessage'
+				v-model='input'
 			></textarea>
-			<button class='conversation__submit button button--blue'>
+			<button
+				class='conversation__submit button button--blue'
+				@click='sendMessage'
+			>
 				Send
 			</button>
 		</div>
@@ -64,25 +71,89 @@
 		},
 		data () {
 			return {
-				messages: (new Array(10)).fill({}).map((m, i) => {
-					return {
-						message: 'Message '.repeat(20),
-						self: i % 2
-					};
-				}),
+				name: '',
+				messages: [],
+				id: null,
+				input: '',
+
+				newConversationUsers: [],
+
 				settingsItems: [
 					{ text: 'Delete', event: 'delete' },
 					{ text: 'Mute', event: 'mute' },
 					{ text: 'Report', event: 'report' }
 				],
 				showModal: false,
-				showNewConversationBar: false
+				showNewConversationBar: !this.$route.params.id
 			}
 		},
 		methods: {
 			alert () {
 				console.log('Confirm')
+			},
+			getConversation () {
+				let id = this.$route.params.id;
+
+				if(id) {
+					this.showNewConversationBar = false;
+					this.axios
+						.get('/api/conversation/' + id)
+						.then(res => {
+							this.showModal = false;
+							this.messages = res.data.Messages;
+							this.name = res.data.name;
+							this.id = res.data.id;
+						})
+						.catch(e => {
+							this.$store.commit('setErrors', e.response.data.errors);
+						});
+				} else {
+					this.showNewConversationBar = true;
+					this.messages = [];
+					this.id = null;
+				}
+			},
+			sendMessage () {
+				if(!this.input.trim().length) return;
+
+				if(this.id) {
+					this.axios
+						.post('/api/message', {
+							content: this.input.trim(),
+							conversationId: this.id
+						})
+						.then(res => {
+							res.data.User = { username: this.$store.state.username }
+							this.messages.push(res.data);
+						})
+						.catch(e => {
+							this.$store.commit('setErrors', e.response.data.errors);
+						});
+				} else {
+					let userIds = this.newConversationUsers.map(user => user.id);
+					userIds.push(+this.$store.state.userId);
+
+					this.axios
+						.post('/api/conversation', { userIds })
+						.then(res => {
+							this.name = res.data.name;
+							this.id = res.data.id;
+							this.$router.push({
+								name: 'conversation',
+								params: { id: res.data.id }
+							});
+						})
+						.catch(e => {
+							this.$store.commit('setErrors', e.response.data.errors);
+						});
+				}
 			}
+		},
+		watch: {
+			'$route.params': 'getConversation'
+		},
+		mounted () {
+			this.getConversation();
 		}
 	};
 </script>
@@ -113,7 +184,7 @@
 				justify-self: end;
 			}
 		@at-root #{&}__main {
-			align-items: end;
+			align-content: flex-end;
 			display: flex;
 			flex-direction: column;
 			overflow-y: auto;

@@ -101,8 +101,9 @@ exports.getFromUser = async function (userId) {
 		return json;
 	});
 	let jsonConversations = await Promise.all(conversationsWithUsersPromises);
+	let filtered = jsonConversations.filter(c => c.Messages.length);
 
-	return jsonConversations.filter(c => c.Messages.length);
+	return filtered;
 };
 
 exports.get = async function (userId, conversationId) {
@@ -113,7 +114,18 @@ exports.get = async function (userId, conversationId) {
 				where: { id: Type.number(userId) },
 				attributes: { exclude: ['hash'] }
 			},
-			Message
+			{
+				model: Message,
+				include: [
+					{
+						model: User,
+						attributes: { exclude: ['hash'] }
+					}
+				]
+			}
+		],
+		order: [
+			[Message, 'id', 'ASC']
 		]
 	});
 

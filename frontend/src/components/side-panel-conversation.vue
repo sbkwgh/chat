@@ -4,7 +4,7 @@
 			<div class='side_panel_conversation__profile_picture'></div>
 		</div>
 		<div class='side_panel_conversation__conversation_content'>
-			<div class='side_panel_conversation__name'>{{conversation.Messages[0].Users.username}}</div>
+			<div class='side_panel_conversation__name'>{{conversation.Messages[0].User.username}}</div>
 			<div class='side_panel_conversation__snippet'>{{conversation.Messages[0].content}}</div>
 		</div>
 	</div>

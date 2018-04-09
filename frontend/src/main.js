@@ -43,6 +43,7 @@ const router = new VueRouter({
 			},
 			children: [
 				{ path: '/', component: IndexPlaceholder },
+				{ path: 'conversation', component: Conversation },
 				{ path: 'conversation/:id', component: Conversation }
 			]
 		}

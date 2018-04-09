@@ -61,15 +61,7 @@
 			return {
 				input: '',
 				inputFocused: false,
-				suggestionsData: [
-					{ username: 'jackdoe' },
-					{ username: 'jackall' },
-					{ username: 'jack.23' },
-					{ username: 'User' },
-					{ username: 'Username' },
-					{ username: 'Username5' },
-					{ username: 'Username55' }
-				],
+				suggestionsData: [],
 				selected: [],
 				focusedSuggestionIndex: null
 			};
@@ -78,10 +70,11 @@
 			suggestions () {
 				let regexp = new RegExp('^' + this.input, 'i')
 
-				return this.suggestionsData.filter(v => {
-					let match = v.username.match(regexp);
-
-					return match && match[0].length && !this.selected.includes(v);
+				return this.suggestionsData.filter(user => {
+					return (
+						!this.selected.includes(user) &&
+						user.username !== this.$store.state.username
+					);
 				});
 			},
 			selectedSuggestionIndex () {
@@ -151,6 +144,27 @@
 				this.input = '';
 				this.focusedSuggestionIndex = null;
 				this.$refs.input.focus();
+			}
+		},
+		watch: {
+			input () {
+				let input = this.input.trim();
+
+				if(input) {
+					this.axios
+						.get('/api/user/search/' + input)
+						.then(res => {
+							this.suggestionsData = res.data;
+						})
+						.catch(e => {
+							this.$store.commit('setErrors', e.response.data.errors);
+						})
+				} else {
+					this.suggestionsData = [];
+				}
+			},
+			selected () {
+				this.$emit('input', this.selected);
 			}
 		}
 	};

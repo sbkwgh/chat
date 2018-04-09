@@ -39,10 +39,10 @@
 			font-size: 0.85rem;
 			font-weight: 300;
 			margin: 0;
-			max-width: 50%;
+			max-width: 75%;
 			padding: 0.5rem 0.75rem;
-			white-space: pre-wrap;
-			word-wrap: break-word;
+			white-space: pre-line;
+			word-break: break-all;
 
 			@at-root #{&}--self {
 				background-color: $blue-2;

@@ -4,7 +4,10 @@
 			<c-menu class='side_panel__username' :items='userMenu'>
 				{{$store.state.username}} <span>&#9660;</span>
 			</c-menu>
-			<button class='side_panel__add button button--blue_border'>
+			<button
+				class='side_panel__add button button--blue_border'
+				@click='$router.push("/app/conversation")'
+			>
 				New conversation
 			</button>
 		</div>
