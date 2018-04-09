@@ -135,7 +135,10 @@ exports.get = async function (userId, conversationId) {
 		});
 	} else {
 		let conversationUsers = await Conversation.findById(conversationId, {
-			include: [User]
+			include: [{
+				model: User,
+				attributes: { exclude: ['hash'] }
+			}]
 		});
 
 		let json = conversation.toJSON();
