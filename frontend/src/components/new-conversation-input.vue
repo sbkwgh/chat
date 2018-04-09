@@ -68,11 +68,9 @@
 		},
 		computed: {
 			suggestions () {
-				let regexp = new RegExp('^' + this.input, 'i')
-
 				return this.suggestionsData.filter(user => {
 					return (
-						!this.selected.includes(user) &&
+						!this.selected.filter(u => u.id === user.id).length &&
 						user.username !== this.$store.state.username
 					);
 				});
