@@ -1,5 +1,9 @@
 <template>
-	<div class='side_panel_conversation' @click='$router.push("/app/conversation/" + conversation.id)'>
+	<div
+		class='side_panel_conversation'
+		:class='{ "side_panel_conversation--selected": selected }'
+		@click='$router.push("/app/conversation/" + conversation.id)'
+	>
 		<div>
 			<div class='side_panel_conversation__profile_picture'></div>
 		</div>
@@ -13,7 +17,15 @@
 <script>
 	export default {
 		name: 'side-panel-conversation',
-		props: ['conversation']
+		props: ['conversation'],
+		computed: {
+			selected () {
+				return (
+					this.$route.name === 'conversation' &&
+					+this.$route.params.id === this.conversation.id
+				);
+			}
+		}
 	};
 </script>
 
@@ -27,11 +39,26 @@
 		display: flex;
 		height: 5rem;
 		padding: 0.5rem;
+		position: relative;
 		transition: background-color 0.2s;
 		width: 100%;
 
-		&:hover {
+		&::hover {
 			background-color: $gray-hover;
+		}
+
+		@at-root #{&}--selected {
+			background-color: $gray-hover;
+
+			&:after {
+				background-color: $gray-4;
+				content: '';
+				height: 100%;
+				left: 0;
+				position: absolute;
+				top: 0;
+				width: 0.25rem;
+			}
 		}
 
 		@at-root #{&}__profile_picture {
