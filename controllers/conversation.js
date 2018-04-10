@@ -1,6 +1,6 @@
 let Type = require('../lib/type');
 let validationError = require('../lib/validationError');
-let { User, Conversation, Message, Sequelize } = require('../models');
+let { User, Conversation, Message, UserConversation, Sequelize } = require('../models');
 
 exports.create = async function (userIds, name) {
 	//Remove duplicates
@@ -16,17 +16,11 @@ exports.create = async function (userIds, name) {
 	users = (await Promise.all(userPromises)).filter(user => user !== null);
 
 	if(users.length > 1) {
-		let defaultName = users.map(u => u.username).join(', ');
-
-		let notNullUserIds = users.map(u => u.id);
+		let notNullUserIds = users.map(u => u.id).sort().join(',');
 		let existingConversation = await Conversation.findOne({
-			where: { name: name || defaultName },
-			includes: [{
-				model: User,
-				where: {
-					id: { [Sequelize.Op.and]: notNullUserIds }
-				}
-			}]
+			where: {
+				groupUsers: notNullUserIds
+			}
 		});
 
 		if(existingConversation) {
@@ -35,7 +29,7 @@ exports.create = async function (userIds, name) {
 				value: userIds
 			});
 		} else {
-			let conversation = await Conversation.create({ name: name || defaultName });
+			let conversation = await Conversation.create({ name, groupUsers: notNullUserIds });
 			await conversation.addUsers(users);
 
 			return conversation.toJSON();
@@ -57,7 +51,7 @@ exports.getFromUser = async function (userId) {
 			createdAt,
 			updatedAt,
 			id,
-
+			
 			Users: [ ... ],
 			Messages: [ ... ]
 		}
@@ -73,15 +67,13 @@ exports.getFromUser = async function (userId) {
 			},
 			{
 				model: Message,
+				include: [{
+					model: User,
+					attributes: { exclude: ['hash'] }
+				}],
 				limit: 1,
 				order: [
 					['id', 'DESC']
-				],
-				include: [
-					{
-						model: User,
-						attributes: { exclude: [ 'hash' ] }
-					} 
 				]
 			}
 		],
@@ -89,21 +81,11 @@ exports.getFromUser = async function (userId) {
 			['updatedAt', 'DESC']
 		]
 	});
+	let conversationWithUsers = await Promise.all(
+		conversations.map(c => c.setName(userId))
+	);
 
-	let conversationsWithUsersPromises = conversations.map(async conversation => {
-		let withUsers = await Conversation.findById(conversation.id, {
-			include: [User]
-		});
-
-		let json = conversation.toJSON();
-		json.Users = withUsers.Users;
-
-		return json;
-	});
-	let jsonConversations = await Promise.all(conversationsWithUsersPromises);
-	let filtered = jsonConversations.filter(c => c.Messages.length);
-
-	return filtered;
+	return conversationWithUsers.filter(c => c.Messages.length);
 };
 
 exports.get = async function (userId, conversationId) {
@@ -134,16 +116,6 @@ exports.get = async function (userId, conversationId) {
 			message: 'Either the conversation doesn\'t exist or you\'re not part of the conversation'
 		});
 	} else {
-		let conversationUsers = await Conversation.findById(conversationId, {
-			include: [{
-				model: User,
-				attributes: { exclude: ['hash'] }
-			}]
-		});
-
-		let json = conversation.toJSON();
-		json.Users = conversationUsers.Users.map(u => u.toJSON());
-
-		return json;
+		return await conversation.setName(userId);
 	}
 };

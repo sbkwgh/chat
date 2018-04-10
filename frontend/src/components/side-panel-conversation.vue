@@ -9,8 +9,11 @@
 			<div class='side_panel_conversation__profile_picture'></div>
 		</div>
 		<div class='side_panel_conversation__conversation_content'>
-			<div class='side_panel_conversation__name'>{{conversation.Messages[0].User.username}}</div>
-			<div class='side_panel_conversation__snippet'>{{conversation.Messages[0].content}}</div>
+			<div class='side_panel_conversation__name'>{{conversation.name}}</div>
+			<div class='side_panel_conversation__snippet'>
+				{{username}}:
+				{{conversation.Messages[0].content}}
+			</div>
 		</div>
 	</div>
 </template>
@@ -25,6 +28,15 @@
 					this.$route.name === 'conversation' &&
 					+this.$route.params.id === this.conversation.id
 				);
+			},
+			username () {
+				let username = this.conversation.Messages[0].User.username;
+
+				if(username === this.$store.state.username) {
+					return 'You';
+				} else {
+					return username;
+				}
 			}
 		},
 		methods: {

@@ -15,7 +15,8 @@ describe('Conversation controller', () => {
 		let users = [
 			{ username: 'user_one', hash: 'password' },
 			{ username: 'user_two', hash: 'password' },
-			{ username: 'user_three', hash: 'password' }
+			{ username: 'user_three', hash: 'password' },
+			{ username: 'user_four', hash: 'password' }
 		];
 
 		for(user of users) {
@@ -30,10 +31,10 @@ describe('Conversation controller', () => {
 	describe('create', () => {
 		it('should create a new conversation', async () => {
 			let res = await conversationController.create([1,2]);
-			res.should.have.property('name', 'user_one, user_two');
+			res.should.have.property('name', undefined);
 
 			let conversation = await Conversation.findById(1, { include: [ User ] });
-			conversation.should.have.property('name', 'user_one, user_two');
+			conversation.should.have.property('name', null);
 			conversation.Users.should.include.something.with.property('username', 'user_one');
 			conversation.Users.should.include.something.with.property('username', 'user_two');
 		});
@@ -59,7 +60,7 @@ describe('Conversation controller', () => {
 		});
 		it('should return an error if the name is greater than 1000 characters', async () => {
 			try {
-				await conversationController.create([1, 2, 3], '1'.repeat(1001));
+				await conversationController.create([1, 2, 4], '1'.repeat(1001));
 				expect(true).not.to.be.true;
 			} catch (e) {
 				e.errors.should.contain.something.with.property('message', 'Name must be 1000 characters or less');
@@ -67,7 +68,7 @@ describe('Conversation controller', () => {
 		});
 		it('should return an error if the name is not a string', async () => {
 			try {
-				await conversationController.create([1, 2, 3], 3);
+				await conversationController.create([1, 2, 4], 3);
 				expect(true).not.to.be.true;
 			} catch (e) {
 				e.errors.should.contain.something.with.property('message', 'Name must be of type string');
@@ -122,7 +123,7 @@ describe('Conversation controller', () => {
 			let res = await conversationController.getFromUser(1);
 
 			res.should.have.length(1);
-			res[0].should.have.property('name', 'user_one, user_two');
+			res[0].should.have.property('name', 'user_two');
 			res[0].Users.should.contain.something.with.property('username', 'user_one');
 			res[0].Users.should.contain.something.with.property('username', 'user_two');
 			res[0].Messages[0].should.have.property('content', 'message 3');
@@ -139,7 +140,7 @@ describe('Conversation controller', () => {
 		it('should get conversation and messages', async () => {
 			let conversation = await conversationController.get(1, 1);
 			
-			conversation.name.should.equal('user_one, user_two');
+			conversation.should.have.property('name', 'user_two');
 			conversation.Users.should.contain.something.with.property('username', 'user_one');
 			conversation.Users.should.contain.something.with.property('username', 'user_two');
 			conversation.Messages.length.should.equal(3);
