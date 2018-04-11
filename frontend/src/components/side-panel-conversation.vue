@@ -63,19 +63,26 @@
 
 		&:hover, &:focus {
 			background-color: $gray-hover;
+			outline: none;
+		}
+
+		&::after {
+			background-color: $gray-4;
+			content: '';
+			height: 100%;
+			left: 0;
+			opacity: 0;
+			position: absolute;
+			top: 0;
+			transition: opacity 0.2s;
+			width: 0.25rem;
 		}
 
 		@at-root #{&}--selected {
 			background-color: $gray-hover;
 
 			&::after {
-				background-color: $gray-4;
-				content: '';
-				height: 100%;
-				left: 0;
-				position: absolute;
-				top: 0;
-				width: 0.25rem;
+				opacity: 1;
 			}
 		}
 
