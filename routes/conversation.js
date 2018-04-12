@@ -26,7 +26,7 @@ router.post('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
 	try {
 		let conversation = await conversationController.get(
-			req.session.userId, +req.params.id
+			req.session.userId, +req.params.id, +req.query.page
 		);
 
 		res.json(conversation);

@@ -42,7 +42,7 @@ exports.create = async function (userIds, name) {
 	}
 };
 
-exports.getFromUser = async function (userId) {
+exports.getFromUser = async function (userId, page) {
 	/*
 		Should return an object like:
 	
@@ -79,7 +79,9 @@ exports.getFromUser = async function (userId) {
 		],
 		order: [
 			['updatedAt', 'DESC']
-		]
+		],
+		limit: 10,
+		offset: (page || 0) * 10
 	});
 	let conversationWithUsers = await Promise.all(
 		conversations.map(c => c.setName(userId))
@@ -88,8 +90,21 @@ exports.getFromUser = async function (userId) {
 	return conversationWithUsers.filter(c => c.Messages.length);
 };
 
-exports.get = async function (userId, conversationId) {
-	let conversation = await Conversation.findById(Type.number(conversationId), {
+exports.get = async function (userId, conversationId, page) {
+	let messageCount = await Message.count({
+		where: {
+			ConversationId: Type.number(conversationId)
+		}
+	});
+
+	let offset = messageCount - (page || 1) * 10;
+	let limit = 10;
+	if(offset < 0) {
+		limit = 10 + offset;
+		offset = 0;
+	}
+
+	let conversation = await Conversation.findById(conversationId, {
 		include: [
 			{
 				model: User,
@@ -103,11 +118,11 @@ exports.get = async function (userId, conversationId) {
 						model: User,
 						attributes: { exclude: ['hash'] }
 					}
-				]
+				],
+				limit,
+				offset,
+				order: [['id', 'ASC']]
 			}
-		],
-		order: [
-			[Message, 'id', 'ASC']
 		]
 	});
 
@@ -116,6 +131,9 @@ exports.get = async function (userId, conversationId) {
 			message: 'Either the conversation doesn\'t exist or you\'re not part of the conversation'
 		});
 	} else {
-		return await conversation.setName(userId);
+		let json = await conversation.setName(userId);
+		json.continuePagination = !!offset;
+
+		return json;
 	}
 };

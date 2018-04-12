@@ -83,7 +83,7 @@ router.get('/:user_id/conversations', async (req, res, next) => {
 			throw new Error('unauthorized');
 		}
 
-		let conversations = await conversationController.getFromUser(id);
+		let conversations = await conversationController.getFromUser(id, +req.query.page);
 		res.json(conversations);
 	} catch (e) { next(e); }
 });

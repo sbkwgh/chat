@@ -29,13 +29,18 @@
 			</div>
 		</transition>
 
-		<div class='conversation__main'>
+		<c-scroll-load
+			class='conversation__main'
+			position='top'
+			@load='getConversation'
+			ref='conversation'
+		>
 			<conversation-message
 				v-for='message in messages'
 				:message='message'
 				:users='users'
 			></conversation-message>
-		</div>
+		</c-scroll-load>
 		<div class='conversation__input_bar'>
 			<textarea
 				class='input input--textarea conversation__input'
@@ -55,18 +60,20 @@
 
 <script>
 	import CMenu from '../components/c-menu';
+	import ConversationMessage from '../components/conversation-message';
 	import ConversationTimeBreak from '../components/conversation-time-break';
 	import CPromptModal from '../components/c-prompt-modal';
-	import ConversationMessage from '../components/conversation-message';
+	import CScrollLoad from '../components/c-scroll-load';
 	import NewConversationInput from '../components/new-conversation-input';
 
 	export default {
 		name: 'conversation',
 		components: {
 			CMenu,
+			ConversationMessage,
 			ConversationTimeBreak,
 			CPromptModal,
-			ConversationMessage,
+			CScrollLoad,
 			NewConversationInput
 		},
 		data () {
@@ -76,6 +83,7 @@
 				users: [],
 				id: null,
 				input: '',
+				page: 1,
 
 				newConversationUsers: [],
 
@@ -85,34 +93,56 @@
 					{ text: 'Report', event: 'report' }
 				],
 				showModal: false,
-				showNewConversationBar: !this.$route.params.id
+				showNewConversationBar: !this.$route.params.id,
+
+				loading: false
 			}
 		},
 		methods: {
 			alert () {
 				console.log('Confirm')
 			},
+			clearData () {
+				this.name = '';
+				this.messages = [];
+				this.id = null;
+				this.page = 1;
+			},
 			getConversation () {
-				let id = this.$route.params.id;
-
-				if(id) {
+				if(this.page === null || this.loading) {
+					return;
+				} else {
 					this.showNewConversationBar = false;
+					this.loading = true;
 					this.axios
-						.get('/api/conversation/' + id)
+						.get(`/api/conversation/${this.$route.params.id}?page=${this.page}`)
 						.then(res => {
+							this.loading = false;
+
 							this.showModal = false;
-							this.messages = res.data.Messages;
 							this.users = res.data.Users;
 							this.name = res.data.name;
 							this.id = res.data.id;
+							this.page= res.data.continuePagination ? this.page + 1 : null;
+
+							let originalMessagesLen = this.messages.length;
+							let ids = this.messages.map(m => m.id);
+							let uniqueMessages = res.data.Messages.filter(message => {
+								return !ids.includes(message.id);
+							});
+							this.messages.unshift(...uniqueMessages);
+
+							if(!originalMessagesLen) {
+								this.$nextTick(() => {
+									let $conversation = this.$refs.conversation.$el;
+									$conversation.scrollTop = $conversation.scrollHeight;
+								});
+							}
 						})
 						.catch(e => {
+							this.loading = false;
 							this.$store.commit('setErrors', e.response.data.errors);
 						});
-				} else {
-					this.showNewConversationBar = true;
-					this.messages = [];
-					this.id = null;
 				}
 			},
 			sendMessage () {
@@ -154,7 +184,15 @@
 			}
 		},
 		watch: {
-			'$route.params': 'getConversation'
+			'$route.params': function () {
+				this.clearData();
+
+				if(this.$route.params.id) {
+					this.getConversation();
+				} else {
+					this.showNewConversationBar = true;
+				}
+			}
 		},
 		mounted () {
 			this.getConversation();
