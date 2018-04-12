@@ -99,7 +99,7 @@ describe('User route', () => {
 	describe('GET /', () => {
 		it('should get an account', async () => {
 			let res = await chai.request(server)
-				.get('/api/user/username')
+				.get('/api/user/1')
 
 			res.should.have.status(200);
 			res.should.be.json;
@@ -109,7 +109,7 @@ describe('User route', () => {
 
 		it('should return an error if no username given', done => {
 			chai.request(server)
-				.get('/api/user/notanccount')
+				.get('/api/user/123')
 				.end((err, res) => {
 					res.should.have.status(400);
 					res.should.be.json;

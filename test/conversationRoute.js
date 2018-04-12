@@ -94,16 +94,17 @@ describe('Conversation route', () => {
 				});
 
 			let conversation = await Conversation.findById(1);
-			conversation.should.have.property('name', 'user_one, user_two, user_three');
+			conversation.should.not.be.null;
 		});
 	});
 
 	describe('GET /api/user/:id/conversations', () => {
 		it('should get a list of conversation from a user', async () => {
-			let res = await userAgent.get('/api/user/1/conversations');
+			await messageController.create({ userId: 1, conversationId: 1, content: 'message 1' });
+			let res = await userAgent.get('/api/user/1/conversations?page=0');
 
-			res.body.length.should.equal(1);
-			res.body.should.contain.something.with.property('name', 'user_one, user_two, user_three');
+			res.body.Conversations.length.should.equal(1);
+			res.body.Conversations.should.contain.something.with.property('name', 'user_one, user_two, user_three');
 		});
 		it('should return an error if not same account', done => {
 			userTwoAgent
@@ -117,11 +118,6 @@ describe('Conversation route', () => {
 
 	describe('GET /:id', () => {
 		before(async () => {
-			await messageController.create({
-				userId: 1,
-				conversationId: 1,
-				content: 'message 1'
-			});
 			await messageController.create({
 				userId: 2,
 				conversationId: 1,

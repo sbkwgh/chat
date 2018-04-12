@@ -122,17 +122,17 @@ describe('Conversation controller', () => {
 		it('should return a list of conversations', async () => {
 			let res = await conversationController.getFromUser(1);
 
-			res.should.have.length(1);
-			res[0].should.have.property('name', 'user_two');
-			res[0].Users.should.contain.something.with.property('username', 'user_one');
-			res[0].Users.should.contain.something.with.property('username', 'user_two');
-			res[0].Messages[0].should.have.property('content', 'message 3');
-			res[0].Messages[0].User.should.have.property('username', 'user_one');
-			res[0].Messages.should.have.length(1);
+			res.Conversations.should.have.length(1);
+			res.Conversations[0].should.have.property('name', 'user_two');
+			res.Conversations[0].Users.should.contain.something.with.property('username', 'user_one');
+			res.Conversations[0].Users.should.contain.something.with.property('username', 'user_two');
+			res.Conversations[0].Messages[0].should.have.property('content', 'message 3');
+			res.Conversations[0].Messages[0].User.should.have.property('username', 'user_one');
+			res.Conversations[0].Messages.should.have.length(1);
 		});
 		it('should return [] from a non-existent user', async () => {
 			let res = await conversationController.getFromUser(10);
-			res.should.have.length(0);
+			res.Conversations.should.have.length(0);
 		});
 	});
 

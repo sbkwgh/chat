@@ -83,6 +83,7 @@ exports.getFromUser = async function (userId, page) {
 		limit: 10,
 		offset: (page || 0) * 10
 	});
+
 	let conversationWithUsers = await Promise.all(
 		conversations.map(c => c.setName(userId))
 	);
