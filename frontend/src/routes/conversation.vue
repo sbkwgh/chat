@@ -32,7 +32,9 @@
 		<c-scroll-load
 			class='conversation__main'
 			position='top'
+			:loading='loading'
 			@load='getConversation'
+
 			ref='conversation'
 		>
 			<conversation-message
