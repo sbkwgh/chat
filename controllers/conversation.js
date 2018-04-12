@@ -87,7 +87,10 @@ exports.getFromUser = async function (userId, page) {
 		conversations.map(c => c.setName(userId))
 	);
 
-	return conversationWithUsers.filter(c => c.Messages.length);
+	return {
+		Conversations: conversationWithUsers.filter(c => c.Messages.length),
+		continuePagination: conversations.length === 10
+	};
 };
 
 exports.get = async function (userId, conversationId, page) {

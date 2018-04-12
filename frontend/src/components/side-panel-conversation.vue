@@ -92,6 +92,14 @@
 			height: 3rem;
 			width: 3rem;
 		}
+		@at-root #{&}__name {
+			display: block;
+			max-height: 1.25rem;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 11.75rem;
+		}
 		@at-root #{&}__conversation_content {
 			margin-left: 0.5rem;
 		}

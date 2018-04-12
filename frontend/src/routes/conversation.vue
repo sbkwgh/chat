@@ -183,10 +183,8 @@
 							this.$store.commit('setErrors', e.response.data.errors);
 						});
 				}
-			}
-		},
-		watch: {
-			'$route.params': function () {
+			},
+			pageLoad () {
 				this.clearData();
 
 				if(this.$route.params.id) {
@@ -196,8 +194,11 @@
 				}
 			}
 		},
+		watch: {
+			'$route.params': 'pageLoad'
+		},
 		mounted () {
-			this.getConversation();
+			this.pageLoad();
 		}
 	};
 </script>

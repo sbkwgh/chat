@@ -19,6 +19,7 @@
 	.loading_icon {
 		display: flex;
 		justify-content: center;
+		padding: 0.25rem 0;
 
 		@at-root #{&}__icon {
 			animation-duration: 1s;

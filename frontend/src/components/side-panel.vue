@@ -22,9 +22,13 @@
 				class='input side_panel__search__input'
 			>
 		</div>
-		<div
+		<c-scroll-load
 			class='side_panel__conversations'
 			:class='{ "side_panel__conversations--empty": !conversations.length }'
+
+			:loading='loading'
+			position='bottom'
+			@load='getConversations'
 		>
 			<side-panel-conversation
 				v-for='conversation in conversations'
@@ -35,23 +39,28 @@
 			<div v-if='!conversations.length'>
 				No conversations
 			</div>
-		</div>
+		</c-scroll-load>
 	</div>
 </template>
 
 <script>
 	import CMenu from './c-menu';
+	import CScrollLoad from './c-scroll-load';
 	import SidePanelConversation from './side-panel-conversation';
 
 	export default {
 		name: 'side-panel',
 		components: {
 			CMenu,
+			CScrollLoad,
 			SidePanelConversation
 		},
 		data () {
 			return {
 				conversations: [],
+				page: 0,
+
+				loading: false,
 				userMenu: [
 					{ text: 'Settings', event: 'settings' },
 					{ text: 'Log out', event: 'logout' }
@@ -69,17 +78,27 @@
 					.catch(e => {
 						this.$store.commit('setErrors', e.response.data.errors);
 					});
+			},
+			getConversations () {
+				if(!this.loading && this.page !== null) {
+					this.loading = true;
+
+					this.axios
+						.get(`/api/user/${this.$store.state.userId}/conversations?page=${this.page}`)
+						.then(res => {
+							this.loading = false;
+							this.conversations.push(...res.data.Conversations);
+							this.page = res.data.continuePagination ? this.page+1 : null;
+						})
+						.catch(e => {
+							this.loading = false;
+							this.$store.commit('setErrors', e.response.data.errors);
+						});
+				}
 			}
 		},
 		mounted () {
-			this.axios
-				.get('/api/user/' + this.$store.state.userId + '/conversations')
-				.then(res => {
-					this.conversations = res.data;
-				})
-				.catch(e => {
-					this.$store.commit('setErrors', e.response.data.errors);
-				});
+			this.getConversations();
 		}
 	};
 </script>
