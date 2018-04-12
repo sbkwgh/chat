@@ -125,19 +125,19 @@
 							this.id = res.data.id;
 							this.page= res.data.continuePagination ? this.page + 1 : null;
 
-							let originalMessagesLen = this.messages.length;
+							let $conversation = this.$refs.conversation.$el;
+							let scrollBottom = $conversation.scrollHeight - $conversation.scrollTop;
+
 							let ids = this.messages.map(m => m.id);
 							let uniqueMessages = res.data.Messages.filter(message => {
 								return !ids.includes(message.id);
 							});
 							this.messages.unshift(...uniqueMessages);
 
-							if(!originalMessagesLen) {
-								this.$nextTick(() => {
-									let $conversation = this.$refs.conversation.$el;
-									$conversation.scrollTop = $conversation.scrollHeight;
-								});
-							}
+							//Scroll back to original position before new messages were added
+							this.$nextTick(() => {
+								$conversation.scrollTop = $conversation.scrollHeight - scrollBottom;
+							});
 						})
 						.catch(e => {
 							this.loading = false;
