@@ -86,7 +86,6 @@
 				name: '',
 				messages: [],
 				users: [],
-				id: null,
 				input: '',
 				page: 1,
 
@@ -110,7 +109,6 @@
 			clearData () {
 				this.name = '';
 				this.messages = [];
-				this.id = null;
 				this.page = 1;
 			},
 			getConversation () {
@@ -127,7 +125,6 @@
 							this.showModal = false;
 							this.users = res.data.Users;
 							this.name = res.data.name;
-							this.id = res.data.id;
 							this.page= res.data.continuePagination ? this.page + 1 : null;
 
 							let $conversation = this.$refs.conversation.$el;
