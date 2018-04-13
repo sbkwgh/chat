@@ -38,7 +38,10 @@
 			ref='conversation'
 		>
 			<conversation-message
-				v-for='message in messages'
+				v-for='(message, $i) in messages'
+				:context='[
+					messages[$i-1], messages[$i+1]
+				]'
 				:message='message'
 				:users='users'
 			></conversation-message>

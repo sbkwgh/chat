@@ -2,12 +2,14 @@
 	<div
 		class='conversation_message'
 		:class='{
-			"conversation_message--self": self
+			"conversation_message--self": self,
+			"conversation_message--margin": useMargin
 		}'
 	>
+		<conversation-time-break :message='message' :previous='context[0]'></conversation-time-break>
 		<div
 			class='conversation_message__username'
-			v-if='users.length > 2 && !self'
+			v-if='showUsername'
 		>
 			{{message.User.username}}
 		</div>
@@ -21,12 +23,37 @@
 </template>
 
 <script>
+	import ConversationTimeBreak from './conversation-time-break';
+
 	export default {
 		name: 'conversation-message',
-		props: ['message', 'users'],
+		props: ['message', 'users', 'context'],
+		components: {
+			ConversationTimeBreak
+		},
 		computed: {
 			self () {
 				return this.message.User.username === this.$store.state.username;
+			},
+			showUsername () {
+				let prev = this.context[0];
+				let selfUsername = this.message.User.username;
+
+				//If first message or not from the same user
+				//and there are more than two users in the conversation
+				return (
+					(!prev || prev.User.username !== selfUsername) &&
+					(this.users.length > 2 && !this.self)
+				);
+			},
+			useMargin () {
+				let next = this.context[1];
+
+				//If next message exists and is not from the same user
+				return (
+					next &&
+					next.User.username !== this.message.User.username
+				);
 			}
 		}
 	};
@@ -39,10 +66,14 @@
 		align-items: flex-start;
 		display: flex;
 		flex-direction: column;
+		margin-bottom: 0.125rem;
 
 		@at-root #{&}--self {
 			align-items: flex-end;
-			margin: 0.5rem 0;
+		}
+
+		@at-root #{&}--margin {
+			margin-bottom: 0.5rem;
 		}
 
 		@at-root #{&}__username {

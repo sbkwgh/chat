@@ -1,5 +1,5 @@
 <template>
-	<div class='conversation_time_break'>
+	<div class='conversation_time_break' v-if='showDate'>
 		{{formattedDate}}
 	</div>
 </template>
@@ -7,23 +7,36 @@
 <script>
 	export default  {
 		name: 'conversation-time-break',
-		props: ['date'],
+		props: ['message', 'previous'],
 		computed: {
 			formattedDate () {
+				let date = new Date(this.message.createdAt);
+
 				let beginningOfToday = new Date();
 				    beginningOfToday.setMilliseconds(0);
 				    beginningOfToday.setSeconds(0);
 				    beginningOfToday.setMinutes(0);
 				    beginningOfToday.setHours(0);
 				let beginningOfYesterday = new Date(beginningOfToday - 24*60*60*1000);
-				let timeString = this.date.toTimeString().slice(0, 5);
+				let timeString = date.toTimeString().slice(0, 5);
 
-				if(this.date - beginningOfToday >= 0) {
+				if(date - beginningOfToday >= 0) {
 					return timeString;
-				} else if(this.date - beginningOfYesterday >= 0) {
+				} else if(date - beginningOfYesterday >= 0) {
 					return 'Yesterday at ' + timeString;
 				} else {
-					return this.date.toLocaleDateString() + ' at ' + timeString;
+					return date.toLocaleDateString() + ' at ' + timeString;
+				}
+			},
+			showDate () {
+				if(!this.previous) {
+					return true;
+				} else {
+					let date = new Date(this.message.createdAt);
+					let prev = new Date(this.previous.createdAt);
+
+					//Greater than 30 minutes difference
+					return !prev || (date - prev) > 1000*60*30;
 				}
 			}
 		}
