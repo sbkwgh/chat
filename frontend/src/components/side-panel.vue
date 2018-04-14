@@ -20,7 +20,20 @@
 				type='text'
 				placeholder='Search conversations and people'
 				class='input side_panel__search__input'
+				:class='{
+					"side_panel__search__input--small": showCloseButton
+				}'
+				@focus='showCloseButton = true'
 			>
+			<transition name='transition-grow'>
+				<button
+					class='button side_panel__search__close'
+					v-if='showCloseButton'
+					@click='showCloseButton = false'
+				>
+					Close
+				</button>
+			</transition>
 		</div>
 		<c-scroll-load
 			class='side_panel__conversations'
@@ -64,7 +77,9 @@
 				userMenu: [
 					{ text: 'Settings', event: 'settings' },
 					{ text: 'Log out', event: 'logout' }
-				]
+				],
+
+				showCloseButton: false
 			};
 		},
 		methods: {
@@ -137,10 +152,22 @@
 			}
 		@at-root #{&}__search {
 			align-self: start;
+			display: grid;
+			grid-template-columns: auto min-content;
 			padding: 0 0.5rem;
 
 			@at-root #{&}__input {
 				padding: 1rem 0.75rem;
+				transition: padding 0.2s;
+
+				@at-root #{&}--small {
+					padding: 1rem 0.25rem;
+				}
+			}
+
+			@at-root #{&}__close {
+				margin-left: 0.25rem;
+				padding: 0 0.25rem;
 			}
 		}
 		@at-root #{&}__conversations {

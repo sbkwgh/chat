@@ -1,3 +1,4 @@
+//Fade enter
 .transition-fade-enter, .transition-fade-leave-to {
 	opacity: 0;
 }
@@ -5,6 +6,7 @@
 	transition: opacity 0.2s linear;
 }
 
+//Slide fade enter
 .transition-slide-fade-enter, .transition-slide-fade-leave-to {
 	opacity: 0;
 	transform: translateY(-1rem) rotateX(-20deg);
@@ -13,6 +15,7 @@
 	transition: opacity 0.2s linear, transform 0.2s ease;
 }
 
+//Horizontal slide enter
 .transition-horizontal-slide-enter {
 	opacity: 0;
 	transform: translateX(-1rem);
@@ -23,4 +26,19 @@
 }
 .transition-horizontal-slide-enter-active, .transition-horizontal-slide-leave-active {
 	transition: opacity 0.2s linear, transform 0.2s ease;
+}
+
+//Grow
+.transition-grow-enter, .transition-grow-leave-to {
+	max-width: 0;
+	opacity: 0;
+	overflow-x: hidden;
+}
+.transition-grow-enter-to, .transition-grow-leave {
+	max-width: 10rem;
+	opacity: 1;
+	overflow-x: hidden;
+}
+.transition-grow-enter-active, .transition-grow-leave-active {
+	transition: max-width 0.2s ease-in-out, opacity 0.2s;
 }
