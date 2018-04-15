@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
 
 		let json = this.toJSON();
 
-		if(!this.Users.length || this.Users.length < 2) {
+		if(!this.Users || this.Users.length < 2) {
 			let users = await sequelize.models.User.findAll({
 				attributes: { exclude: ['hash'] },
 				include: [{

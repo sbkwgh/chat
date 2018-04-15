@@ -1,6 +1,13 @@
 let Type = require('../lib/type');
 let validationError = require('../lib/validationError');
-let { User, Conversation, Message, UserConversation, Sequelize } = require('../models');
+let {
+	User,
+	Conversation,
+	Message,
+	UserConversation,
+	Sequelize,
+} = require('../models');
+let sequelizeInstance = require('../models').sequelize;
 
 exports.create = async function (userIds, name) {
 	//Remove duplicates
@@ -42,7 +49,7 @@ exports.create = async function (userIds, name) {
 	}
 };
 
-exports.getFromUser = async function (userId, page) {
+exports.getFromUser = async function (userId, page, searchString) {
 	/*
 		Should return an object like:
 	
@@ -58,39 +65,76 @@ exports.getFromUser = async function (userId, page) {
 
 	*/
 
-	let conversations = await Conversation.findAll({
-		include: [
-			{
-				model: User,
-				where: { id: userId },
-				attributes: { exclude: ['hash'] }
-			},
-			{
-				model: Message,
-				include: [{
-					model: User,
-					attributes: { exclude: ['hash'] }
-				}],
-				limit: 1,
-				order: [
-					['id', 'DESC']
-				]
-			}
-		],
-		order: [
-			['updatedAt', 'DESC']
-		],
-		limit: 10,
-		offset: (page || 0) * 10
+	let sql = `
+		SELECT
+			conversations.*,
+			messages.content as 'Messages.content',
+			users.username as 'User.username',
+			users.id as 'User.id'
+
+		FROM
+			(
+				SELECT ConversationId
+				FROM userconversations
+				INNER JOIN users
+				ON userconversations.UserId = users.id
+				WHERE users.id = :userId OR users.username in (:usernames)
+				GROUP BY userconversations.ConversationId
+				HAVING count(*) = :usernamesLen
+			) q
+		JOIN conversations
+			ON conversations.id = q.ConversationId
+		JOIN messages
+			ON conversations.id = messages.ConversationId AND messages.id in
+				(
+					SELECT MAX(id)
+					FROM messages
+					WHERE messages.ConversationId = conversations.id
+				)
+		JOIN users
+			ON users.id = messages.UserId
+
+		ORDER BY messages.id DESC
+
+		LIMIT 9
+		OFFSET :offset
+	`;
+	let offset = (page || 0) * 10;
+	let usernames = (searchString || '').trim().split(/\s+/);
+	let usernamesLen = usernames.length + 1;
+	if(!searchString) {
+		usernames = '';
+		usernamesLen = 1;
+	}
+
+	let conversations = await sequelizeInstance.query(sql, {
+		replacements: { userId, usernames, usernamesLen, offset },
+		type: sequelizeInstance.QueryTypes.SELECT,
+		model: Conversation
 	});
 
-	let conversationWithUsers = await Promise.all(
-		conversations.map(c => c.setName(userId))
-	);
+	let mappedPropertiesPromises = conversations.map(async conversation => {
+		let json = await conversation.setName(userId);
+
+		json.Messages = [{
+			content: json['Messages.content'],
+			User: {
+				id: json['User.id'],
+				username: json['User.username']
+			}
+		}];
+
+		delete json['Messages.content'];
+		delete json['User.id'];
+		delete json['User.username'];
+
+		return json;
+	});
+	let mappedProperties = await Promise.all(mappedPropertiesPromises);
 
 	return {
-		Conversations: conversationWithUsers.filter(c => c.Messages.length),
-		continuePagination: conversations.length === 10
+		Conversations: mappedProperties,
+		continuePagination: mappedProperties.length === 10
 	};
 };
 

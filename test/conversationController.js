@@ -4,7 +4,7 @@ let chai = require('chai');
 chai.use(require('chai-things'));
 
 let models = require('../models');
-	let { Sequelize, User, Conversation } = models;
+	let { Sequelize, User, Conversation, Message } = models;
 	let sequelizeInstance = models.sequelize;
 let conversationController = require('../controllers/conversation');
 let messageController = require('../controllers/message');
@@ -172,4 +172,33 @@ describe('Conversation controller', () => {
 			}
 		});
 	});
+
+	describe('getFromUser search', () => {
+		let firstId;
+		before(async () => {
+			firstId = ( await conversationController.create([2, 3]) ).id;
+			await conversationController.create([2, 3, 4]);
+			await conversationController.create([2, 4]);
+
+			let messages = [];
+			for(let i = firstId; i < firstId+3; i++) {
+				messages.push(
+					await messageController.create({
+						userId: 2,
+						conversationId: i,
+						content: 'search ' + i
+					})
+				);
+			}
+		});
+
+		it('should return an array of conversations matching the user id and a set of usernames', async () => {
+			let conversations = await conversationController.getFromUser(2, 0, 'user_three');
+
+			//2 not three, because it only gets conversations where there are messages
+			conversations.Conversations.should.have.length(2);
+			conversations.Conversations[0].Messages[0].should.have.property('content', 'search ' + (firstId+1) );
+			conversations.Conversations[1].Messages[0].should.have.property('content', 'search ' + firstId);
+		});
+	})
 })
