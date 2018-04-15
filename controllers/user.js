@@ -10,24 +10,9 @@ exports.create = async function (username , password) {
 	return userJson;
 };
 
-exports.get = async function () {
-	let arg = arguments[0]
-	let where = {};
-
-	if(typeof arg === 'string') {
-		where.username = arg;
-	} else if(typeof arg === 'number') {
-		where.id = arg;
-	} else {
-		throw validationError(sequelize, {
-			message: 'Parameter must be a string or number',
-			value: arg
-		});
-	}
-
-	let user = await User.findOne({
-		attributes: { exclude: ['hash'] },
-		where
+exports.get = async function (userId) {
+	let user = await User.findById(userId, {
+		attributes: { exclude: ['hash'] }
 	});
 
 	if(user) {
@@ -41,13 +26,6 @@ exports.get = async function () {
 }
 
 exports.getAllBeginningWith = async function (username) {
-	if(typeof username !== 'string') {
-		throw validationError(sequelize, {
-			message: 'Username must be a string',
-			value: username
-		});
-	}
-
 	let users = await User.findAll({
 		attributes: { exclude: ['hash'] },
 		where: {

@@ -137,26 +137,12 @@ describe('User controller', () => {
 			res.should.have.property('username', 'username');
 			res.should.not.have.property('hash');
 		});
-		it('should get an account via the username', async () => {
-			let res = await userController.get('username');
-
-			res.should.have.property('username', 'username');
-			res.should.not.have.property('hash');
-		});
 		it('should return an error if the username does not exist', async () => {
 			try {
 				let res = await userController.get(3);
 			} catch (e) {
 				(e instanceof Sequelize.ValidationError).should.be.true;
 				e.errors.should.contain.something.with.property('message', 'User does not exist');
-			}
-		});
-		it('should return an error if parameter is not a string or number', async () => {
-			try {
-				let res = await userController.get(null);
-			} catch (e) {
-				(e instanceof Sequelize.ValidationError).should.be.true;
-				e.errors.should.contain.something.with.property('message', 'Parameter must be a string or number');
 			}
 		});
 	})
@@ -177,18 +163,9 @@ describe('User controller', () => {
 			users[1].username.should.equal('john_abc');
 			users[2].username.should.equal('john_abd');
 		});
-		it('should get return an empty string if no users exist', async () => {
+		it('should get return an empty array if no users exist', async () => {
 			let users = await userController.getAllBeginningWith('123456yuhjnbvcxsawe456');
 			users.length.should.equal(0);
-		});
-		it('should return an error if no string provided', async () => {
-			try {
-				let users = await userController.getAllBeginningWith([]);
-
-				expect(true).to.be.false;
-			} catch (e) {
-				e.errors.should.contain.something.with.property('message', 'Username must be a string');
-			}
 		});
 	})
 })

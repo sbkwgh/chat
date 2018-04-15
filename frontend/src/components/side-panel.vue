@@ -86,6 +86,7 @@
 			};
 		},
 		watch: {
+			//When typing for each letter clear the data
 			searchQuery () {
 				this.page = 0;
 				this.conversations = [];
