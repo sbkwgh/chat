@@ -71,14 +71,6 @@ describe('User controller', () => {
 				e.errors.should.contain.something.with.property('message', 'Username can\'t contain blank characters');
 			}
 		});
-		it('should return an error if username is not a string', async () => {
-			try {
-				await userController.create({}, 'password');
-			} catch (e) {
-				expect(e instanceof Sequelize.ValidationError).to.be.true;
-				e.errors.should.contain.something.with.property('message', 'Username must be a string');
-			}
-		});
 
 		it('should return an error if password is less than 8 characters', async () => {
 			try {
@@ -94,14 +86,6 @@ describe('User controller', () => {
 			} catch (e) {
 				expect(e instanceof Sequelize.ValidationError).to.be.true;
 				e.errors.should.contain.something.with.property('message', 'Password can\'t be longer than 100 characters');
-			}
-		});
-		it('should return an error if password is not a string', async () => {
-			try {
-				await userController.create('abcdefgh', {});
-			} catch (e) {
-				expect(e instanceof Sequelize.ValidationError).to.be.true;
-				e.errors.should.contain.something.with.property('message', 'Password must be a string');
 			}
 		});
 	});

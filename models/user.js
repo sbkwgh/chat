@@ -10,11 +10,6 @@ module.exports = (sequelize, DataTypes) => {
 				fields: ['username']
 			},
 			validate: {
-				isString (val) {
-					if(typeof val !== 'string') {
-						throw new sequelize.ValidationError('Username must be a string');
-					}
-				},
 				maxLength (val) {
 					if(val.trim().length > 30) {
 						throw new sequelize.ValidationError('Username can\'t be longer than 30 characters');
@@ -35,11 +30,6 @@ module.exports = (sequelize, DataTypes) => {
 		hash: {
 			type: DataTypes.STRING,
 			validate: {
-				isString (val) {
-					if(typeof val !== 'string') {
-						throw new sequelize.ValidationError('Password must be a string');
-					}
-				},
 				maxLength (val) {
 					if(val.length > 30) {
 						throw new sequelize.ValidationError('Password can\'t be longer than 100 characters');
