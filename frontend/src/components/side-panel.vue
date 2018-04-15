@@ -51,7 +51,7 @@
 				tabindex='0'
 			></side-panel-conversation>
 
-			<div v-if='!conversations.length'>
+			<div v-if='!conversations.length && !loading'>
 				No conversations
 			</div>
 		</c-scroll-load>
