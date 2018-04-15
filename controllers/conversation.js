@@ -64,6 +64,20 @@ exports.getFromUser = async function (userId, page, searchString) {
 		}
 
 	*/
+	
+	let usernames = (searchString || '').split(/\s+/);
+	let replacementsObj = {
+		offset: (page || 0) * 10,
+		usernamesLen: usernames.length,
+		usernames: usernames.join('|'),
+		userId
+	 };
+
+	let orClause = '';
+	if(usernames[0]) {
+		orClause = 'OR users.username RLIKE :usernames'
+		replacementsObj.usernamesLen++;
+	}
 
 	let sql = `
 		SELECT
@@ -78,7 +92,7 @@ exports.getFromUser = async function (userId, page, searchString) {
 				FROM userconversations
 				INNER JOIN users
 				ON userconversations.UserId = users.id
-				WHERE users.id = :userId OR users.username in (:usernames)
+				WHERE users.id = :userId ${orClause}
 				GROUP BY userconversations.ConversationId
 				HAVING count(*) = :usernamesLen
 			) q
@@ -96,19 +110,12 @@ exports.getFromUser = async function (userId, page, searchString) {
 
 		ORDER BY messages.id DESC
 
-		LIMIT 9
+		LIMIT 10
 		OFFSET :offset
 	`;
-	let offset = (page || 0) * 10;
-	let usernames = (searchString || '').trim().split(/\s+/);
-	let usernamesLen = usernames.length + 1;
-	if(!searchString) {
-		usernames = '';
-		usernamesLen = 1;
-	}
 
 	let conversations = await sequelizeInstance.query(sql, {
-		replacements: { userId, usernames, usernamesLen, offset },
+		replacements: replacementsObj,
 		type: sequelizeInstance.QueryTypes.SELECT,
 		model: Conversation
 	});
