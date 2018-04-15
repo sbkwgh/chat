@@ -23,13 +23,15 @@
 				:class='{
 					"side_panel__search__input--small": showCloseButton
 				}'
-				@focus='showCloseButton = true'
+				@focus='setShowCloseButton(true)'
+				@keyup='getConversations'
+				v-model='searchQuery'
 			>
 			<transition name='transition-grow'>
 				<button
 					class='button side_panel__search__close'
 					v-if='showCloseButton'
-					@click='showCloseButton = false'
+					@click='setShowCloseButton(false)'
 				>
 					Close
 				</button>
@@ -79,8 +81,15 @@
 					{ text: 'Log out', event: 'logout' }
 				],
 
-				showCloseButton: false
+				showCloseButton: false,
+				searchQuery: ''
 			};
+		},
+		watch: {
+			searchQuery () {
+				this.page = 0;
+				this.conversations = [];
+			}
 		},
 		methods: {
 			logout () {
@@ -94,12 +103,28 @@
 						this.$store.commit('setErrors', e.response.data.errors);
 					});
 			},
+			setShowCloseButton (val) {
+				if(this.showCloseButton !== val) {
+					this.showCloseButton = val;
+					this.conversations = [];
+					this.page = 0;
+
+					if(!val) {
+						this.searchQuery = '';
+						this.getConversations();
+					}
+				}
+			},
 			getConversations () {
 				if(!this.loading && this.page !== null) {
+					let params = { page: this.page };
+					let searchQuery = this.searchQuery.trim();
+					if(searchQuery) params.search = searchQuery;
+
 					this.loading = true;
 
 					this.axios
-						.get(`/api/user/${this.$store.state.userId}/conversations?page=${this.page}`)
+						.get(`/api/user/${this.$store.state.userId}/conversations`, { params })
 						.then(res => {
 							this.loading = false;
 							this.conversations.push(...res.data.Conversations);
