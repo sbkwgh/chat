@@ -1,3 +1,4 @@
+let validation = require('../lib/validation');
 let userController = require('../controllers/user');
 let conversationController = require('../controllers/conversation');
 let router = require('express').Router();
@@ -15,11 +16,53 @@ function clearSession (req, res) {
 	res.clearCookie('id');
 }
 
-router.post('/', async (req, res, next) => {
+let userBodySchema = {
+	body: {
+		username: {
+			required: true,
+			type: 'string'
+		},
+		password: {
+			required: true,
+			type: 'string'
+		}
+	}
+};
+let userIdParamsSchema = {
+	params: {
+		userId: {
+			type: (val) => /^\d+$/.test(val),
+			typeName: 'number',
+			required: true
+		}
+	}
+};
+let getConversationsParamsSchema = {
+	params: {
+		userId: {
+			type: (val) => /^\d+$/.test(val),
+			typeName: 'number',
+			required: true
+		}
+	},
+	query: {
+		page: {
+			type: (val) => /^\d+$/.test(val),
+			typeName: 'number',
+			required: false
+		},
+		search: {
+			type: 'string',
+			required: false
+		}
+	}
+};
+
+router.post('/', validation(userBodySchema), async (req, res, next) => {
 	try {
 		let user = await userController.create(
-			req.body.username || '',
-			req.body.password || ''
+			req.body.username,
+			req.body.password
 		);
 		
 		setSession(req, res, user);
@@ -28,11 +71,11 @@ router.post('/', async (req, res, next) => {
 	} catch (e) { next(e); }
 });
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', validation(userBodySchema), async (req, res, next) => {
 	try {
 		let user = await userController.login(
-			req.body.username || '',
-			req.body.password || ''
+			req.body.username,
+			req.body.password
 		);
 
 		setSession(req, res, user);
@@ -48,9 +91,9 @@ router.post('/logout', async (req, res, next) => {
 	} catch (e) { next(e); }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:userId', validation(userIdParamsSchema), async (req, res, next) => {
 	try {
-		let user = await userController.get(+req.params.id);
+		let user = await userController.get(+req.params.userId);
 
 		res.json(user);
 	} catch (e) { next(e) };
@@ -75,9 +118,9 @@ router.all('*', (req, res, next) => {
 	}
 });
 
-router.get('/:user_id/conversations', async (req, res, next) => {
+router.get('/:userId/conversations', validation(getConversationsParamsSchema), async (req, res, next) => {
 	try {
-		let id = +req.params.user_id;
+		let id = +req.params.userId;
 
 		if(req.session.userId !== id) {
 			throw new Error('unauthorized');

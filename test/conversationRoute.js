@@ -114,6 +114,14 @@ describe('Conversation route', () => {
 					done();
 				})
 		});
+		it('should return an error if userId not a number, page not a number', done => {
+			userAgent.get('/api/user/null/conversations?page=false')
+				.end((err, res) => {
+					res.body.errors.should.contain.something.with.property('message', 'userId must be of type number')
+					res.body.errors.should.contain.something.with.property('message', 'page must be of type number')
+					done();
+				})
+		});
 	});
 
 	describe('GET /:id', () => {

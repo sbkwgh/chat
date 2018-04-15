@@ -48,11 +48,46 @@ describe('User route', () => {
 			user.should.have.property('username', 'username');
 		});
 
-		it('should return an error if no username or password provided', done => {
+		it('should return an error if username or password are not a string', done => {
+			chai.request(server)
+				.post('/api/user')
+				.set('content-type', 'application/json')
+				.send({
+					username: [],
+					password: null
+				})
+				.end((err, res) => {
+					res.should.have.status(400);
+					res.should.be.json;
+					res.body.errors.should.contain.something.with.property('message', 'username must be of type string');
+					res.body.errors.should.contain.something.with.property('message', 'password must be of type string');
+
+					done();
+				})
+		});
+		it('should return an error if username or password are not given', done => {
 			chai.request(server)
 				.post('/api/user')
 				.set('content-type', 'application/json')
 				.send()
+				.end((err, res) => {
+					res.should.have.status(400);
+					res.should.be.json;
+					res.body.errors.should.contain.something.with.property('message', 'username must be of type string');
+					res.body.errors.should.contain.something.with.property('message', 'password must be of type string');
+
+					done();
+				})
+		});
+
+		it('should return an error if username or password less than set characers', done => {
+			chai.request(server)
+				.post('/api/user')
+				.set('content-type', 'application/json')
+				.send({
+					username: '123',
+					password: '123'
+				})
 				.end((err, res) => {
 					res.should.have.status(400);
 					res.should.be.json;
@@ -90,13 +125,28 @@ describe('User route', () => {
 				.end((err, res) => {
 					res.should.have.status(400);
 					res.should.be.json;
+					res.body.errors.should.contain.something.with.property('message', 'username must be of type string');
+					res.body.errors.should.contain.something.with.property('message', 'password must be of type string');
+
+					done();
+				})
+		})
+
+		it('should return an error if incorrect username or password provided', done => {
+			chai.request(server)
+				.post('/api/user/login')
+				.set('content-type', 'application/json')
+				.send({ username: 'notreal', password: 'notreal' })
+				.end((err, res) => {
+					res.should.have.status(400);
+					res.should.be.json;
 					res.body.errors.should.contain.something.with.property('message', 'Username is incorrect');
 
 					done();
 				})
 		})
 	});
-	describe('GET /', () => {
+	describe('GET /:id', () => {
 		it('should get an account', async () => {
 			let res = await chai.request(server)
 				.get('/api/user/1')
@@ -106,6 +156,18 @@ describe('User route', () => {
 			res.body.should.have.property('username', 'username');
 			res.body.should.not.have.property('hash');
 		});
+
+		it('should return an error if not a number', done => {
+			chai.request(server)
+				.get('/api/user/false')
+				.end((err, res) => {
+					res.should.have.status(400);
+					res.should.be.json;
+					res.body.errors.should.contain.something.with.property('message', 'userId must be of type number');
+
+					done();
+				})
+		})
 
 		it('should return an error if no username given', done => {
 			chai.request(server)

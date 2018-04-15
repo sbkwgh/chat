@@ -20,7 +20,7 @@ exports.get = async function (userId) {
 	} else {
 		throw validationError(sequelize, {
 			message: 'User does not exist',
-			value: arg
+			value: userId
 		});
 	}
 }
