@@ -111,6 +111,11 @@
 				this.messages = [];
 				this.page = 1;
 			},
+			hasConversationGotScrollbar () {
+				let $el = this.$refs.conversation.$el;
+
+				return $el.scrollHeight > $el.clientHeight;
+			},
 			getConversation () {
 				if(this.page === null || this.loading) {
 					return;
@@ -140,6 +145,12 @@
 							this.$nextTick(() => {
 								$conversation.scrollTop = $conversation.scrollHeight - scrollBottom;
 							});
+
+							//Keep loading conversations until there is a scroll bar
+							//To enable the scroll load mechanism
+							if(!this.hasConversationGotScrollbar()) {
+								this.getConversation();
+							}
 						})
 						.catch(e => {
 							this.loading = false;
