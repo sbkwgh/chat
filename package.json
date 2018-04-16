@@ -10,6 +10,7 @@
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "mysql2": "^1.5.3",
+    "randomcolor": "^0.5.3",
     "sequelize": "^4.37.4",
     "sequelize-cli": "^4.0.0"
   },

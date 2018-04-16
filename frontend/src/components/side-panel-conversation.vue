@@ -9,12 +9,15 @@
 			<div class='side_panel_conversation__profile_picture'>
 				<div
 					class='side_panel_conversation__profile_picture__letter'
-					v-for='letter in userLetters'
+					v-for='userLetter in userLetters'
 					:class='[
 						"side_panel_conversation__profile_picture__letter--" + userLetters.length
 					]'
+					:style='{
+						"background-color": userLetter.color
+					}'
 				>
-					{{letter}}
+					{{userLetter.letter}}
 				</div>
 			</div>
 		</div>
@@ -51,7 +54,12 @@
 			userLetters () {
 				return this.conversation.Users
 					.filter(u => u.username !== this.$store.state.username)
-					.map(u => u.username[0].toUpperCase())
+					.map(u => {
+						return {
+							letter: u.username[0].toUpperCase(),
+							color: u.color
+						};
+					})
 					.slice(0, 4);
 			}
 		},

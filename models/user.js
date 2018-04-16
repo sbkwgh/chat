@@ -1,4 +1,5 @@
 let validationError = require('../lib/validationError');
+let randomColor = require('randomcolor');
 let bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
@@ -25,6 +26,12 @@ module.exports = (sequelize, DataTypes) => {
 						throw new sequelize.ValidationError('Username can\'t contain blank characters');
 					}
 				}
+			}
+		},
+		color: {
+			type: DataTypes.STRING,
+			defaultValue () {
+				return randomColor({ luminosity: 'light' });
 			}
 		},
 		hash: {

@@ -12,6 +12,9 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true
       },
+      color: {
+        type: Sequelize.STRING
+      },
       hash: {
         type: Sequelize.STRING
       },
