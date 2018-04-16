@@ -6,7 +6,17 @@
 		@keydown.enter='goToConversation'
 	>
 		<div>
-			<div class='side_panel_conversation__profile_picture'></div>
+			<div class='side_panel_conversation__profile_picture'>
+				<div
+					class='side_panel_conversation__profile_picture__letter'
+					v-for='letter in userLetters'
+					:class='[
+						"side_panel_conversation__profile_picture__letter--" + userLetters.length
+					]'
+				>
+					{{letter}}
+				</div>
+			</div>
 		</div>
 		<div class='side_panel_conversation__conversation_content'>
 			<div class='side_panel_conversation__name'>{{conversation.name}}</div>
@@ -37,6 +47,12 @@
 				} else {
 					return username;
 				}
+			},
+			userLetters () {
+				return this.conversation.Users
+					.filter(u => u.username !== this.$store.state.username)
+					.map(u => u.username[0].toUpperCase())
+					.slice(0, 4);
 			}
 		},
 		methods: {
@@ -90,7 +106,58 @@
 			background-color: $gray-1;
 			border-radius: 100%;
 			height: 3rem;
+			overflow: hidden;
 			width: 3rem;
+
+			@at-root #{&}__letter {
+				font-weight: 300;
+				padding: 0.25rem;
+				text-align: center;
+
+				@at-root #{&}--1, #{&}--2 {
+					font-size: 1.5rem;
+					height: 3rem;
+					line-height: 2.5rem;
+					width: 3rem;
+				}
+				@at-root #{&}--2 {
+					display: inline-block;
+					font-size: 1rem;
+					width: 1.5rem;
+				}
+				@at-root #{&}--3 {
+					height: 1.5rem;
+
+					&:nth-child(1), &:nth-child(2) {
+						display: inline-block;
+						padding-bottom: 0;
+						width: 1.5rem;
+					}
+					&:nth-child(3) {
+						padding-bottom: 0.5rem;
+						padding-top: 0;
+						width: 3rem;
+					}
+				}
+				@at-root #{&}--4 {
+					display: inline-block;
+					height: 1.5rem;
+					width: 1.5rem;
+
+					&:nth-child(1), &:nth-child(2) {
+						padding-bottom: 0;
+					}
+					&:nth-child(3), &:nth-child(4) {
+						padding-top: 0;
+					}
+					&:nth-child(1), &:nth-child(3) {
+						padding-right: 0;
+					}
+					&:nth-child(2), &:nth-child(4) {
+						padding-left: 0;
+					}
+				}
+			}
 		}
 		@at-root #{&}__name {
 			display: block;
