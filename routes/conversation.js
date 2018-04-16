@@ -1,3 +1,4 @@
+let validation = require('../lib/validation');
 let conversationController = require('../controllers/conversation');
 let router = require('express').Router();
 
@@ -12,7 +13,19 @@ router.all('*', (req, res, next) => {
 	}
 });
 
-router.post('/', async (req, res, next) => {
+let createPostSchema = {
+	body: {
+		userIds: {
+			required: true,
+			type: 'array.integer'
+		},
+		name: {
+			required: false,
+			type: 'string'
+		}
+	}
+};
+router.post('/', validation(createPostSchema), async (req, res, next) => {
 	try {
 		let conversation = await conversationController.create(
 			req.body.userIds,
@@ -23,10 +36,24 @@ router.post('/', async (req, res, next) => {
 	} catch (e) { next(e); }
 });
 
-router.get('/:id', async (req, res, next) => {
+let getPostSchema = {
+	params: {
+		conversationId: {
+			required: true,
+			type: 'string(integer)'
+		}
+	},
+	query: {
+		page: {
+			required: false,
+			type: 'string(integer)'
+		}
+	}
+};
+router.get('/:conversationId', validation(getPostSchema), async (req, res, next) => {
 	try {
 		let conversation = await conversationController.get(
-			req.session.userId, +req.params.id, +req.query.page
+			req.session.userId, +req.params.conversationId, +req.query.page
 		);
 
 		res.json(conversation);

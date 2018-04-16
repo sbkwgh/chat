@@ -163,7 +163,7 @@ describe('User route', () => {
 				.end((err, res) => {
 					res.should.have.status(400);
 					res.should.be.json;
-					res.body.errors.should.contain.something.with.property('message', 'userId must be of type number');
+					res.body.errors.should.contain.something.with.property('message', 'userId must be of type string(integer)');
 
 					done();
 				})

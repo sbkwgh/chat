@@ -31,8 +31,7 @@ let userBodySchema = {
 let userIdParamsSchema = {
 	params: {
 		userId: {
-			type: (val) => /^\d+$/.test(val),
-			typeName: 'number',
+			type: 'string(integer)',
 			required: true
 		}
 	}
@@ -40,15 +39,13 @@ let userIdParamsSchema = {
 let getConversationsParamsSchema = {
 	params: {
 		userId: {
-			type: (val) => /^\d+$/.test(val),
-			typeName: 'number',
+			type: 'string(integer)',
 			required: true
 		}
 	},
 	query: {
 		page: {
-			type: (val) => /^\d+$/.test(val),
-			typeName: 'number',
+			type: 'string(integer)',
 			required: false
 		},
 		search: {

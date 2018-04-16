@@ -85,6 +85,20 @@ describe('Conversation route', () => {
 					done();
 				})
 		});
+		it('should return an error if userIds or name of wrong type', done => {
+			userAgent
+				.post('/api/conversation')
+				.set('content-type', 'application/json')
+				.send({
+					userIds: [1,2,null],
+					name: {}
+				})
+				.end((err, res) => {
+					res.body.errors.should.contain.something.with.property('message', 'userIds must be of type array.integer')
+					res.body.errors.should.contain.something.with.property('message', 'name must be of type string')
+					done();
+				})
+		});
 		it('should create a conversation', async () => {
 			let res = await userAgent
 				.post('/api/conversation')
@@ -117,8 +131,8 @@ describe('Conversation route', () => {
 		it('should return an error if userId not a number, page not a number', done => {
 			userAgent.get('/api/user/null/conversations?page=false')
 				.end((err, res) => {
-					res.body.errors.should.contain.something.with.property('message', 'userId must be of type number')
-					res.body.errors.should.contain.something.with.property('message', 'page must be of type number')
+					res.body.errors.should.contain.something.with.property('message', 'userId must be of type string(integer)')
+					res.body.errors.should.contain.something.with.property('message', 'page must be of type string(integer)')
 					done();
 				})
 		});
@@ -145,6 +159,14 @@ describe('Conversation route', () => {
 
 			res.body.Messages.length.should.equal(3);
 			res.body.Messages[2].should.have.property('content', 'message 3');
+		});
+		it('should return an error if userId not an integer', done => {
+			userAgent
+				.get('/api/conversation/false')
+				.end((err, res) => {
+					res.body.errors.should.contain.something.with.property('message', 'conversationId must be of type string(integer)')
+					done();
+				})
 		});
 		it('should return an error if user is not logged in', done => {
 			chai.request(server)
