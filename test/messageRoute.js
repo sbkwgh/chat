@@ -86,6 +86,20 @@ describe('Message route', () => {
 					done();
 				})
 		});
+		it('should return an error if types are invalid', done => {
+			userAgent
+				.post('/api/message')
+				.set('content-type', 'application/json')
+				.send({
+					content: null,
+					conversationId: 12.4
+				})
+				.end((err, res) => {
+					res.body.errors.should.contain.something.with.property('message', 'content must be of type string');
+					res.body.errors.should.contain.something.with.property('message', 'conversationId must be of type integer');
+					done();
+				})
+		});
 		it('should create a message', async () => {
 			let res = await userAgent
 				.post('/api/message')
