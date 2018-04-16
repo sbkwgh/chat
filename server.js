@@ -1,4 +1,5 @@
 const { sequelize } = require('./models');
+const sockets = require('./sockets');
 const express = require('express');
 const app = express();
 
@@ -48,6 +49,7 @@ let server = app.listen(port, () => {
 	app.emit('server started');
 	app.set('server started', true);
 });
+sockets({ server, app });
 
 module.exports = { server, app };
 

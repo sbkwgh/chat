@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
+import VueIo from './lib/vue-io';
 
 import App from './App';
 import store from './store';
@@ -16,6 +17,7 @@ import Conversation from './routes/conversation';
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
+Vue.use(VueIo);
 
 const router = new VueRouter({
 	mode: 'history',
