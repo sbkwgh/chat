@@ -148,7 +148,7 @@ exports.getFromUser = async function (userId, page, searchString) {
 exports.get = async function (userId, conversationId, page) {
 	let messageCount = await Message.count({
 		where: {
-			ConversationId: Type.number(conversationId)
+			ConversationId: conversationId
 		}
 	});
 
@@ -163,7 +163,7 @@ exports.get = async function (userId, conversationId, page) {
 		include: [
 			{
 				model: User,
-				where: { id: Type.number(userId) },
+				where: { id: userId },
 				attributes: { exclude: ['hash'] }
 			},
 			{
