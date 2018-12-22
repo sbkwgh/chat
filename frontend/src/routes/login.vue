@@ -193,10 +193,10 @@
 
 	.transition-fade-enter, .transition-fade-leave-to {
 	opacity: 0;
-}
-.transition-fade-enter-active, .transition-fade-leave-active {
-	transition: opacity 0.2s easein;
-}
+	}
+	.transition-fade-enter-active, .transition-fade-leave-active {
+		transition: opacity 0.2s easein;
+	}
 
 	.login {
 		align-items: center;
