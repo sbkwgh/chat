@@ -46,16 +46,17 @@
 				:users='users'
 			></conversation-message>
 		</c-scroll-load>
+
 		<div class='conversation__input_bar'>
 			<textarea
 				class='input input--textarea conversation__input'
 				placeholder='Type your message here'
-				@keydown.enter.prevent='sendMessage'
+				@keydown.enter.prevent='() => $route.params.id ? sendMessage() : createConversation()'
 				v-model='input'
 			></textarea>
 			<button
 				class='conversation__submit button button--blue'
-				@click='sendMessage'
+				@click='() => $route.params.id ? sendMessage() : createConversation()'
 			>
 				Send
 			</button>
@@ -110,6 +111,7 @@
 				this.name = '';
 				this.messages = [];
 				this.page = 1;
+				this.newConversationUsers = [];
 			},
 			hasConversationGotScrollbar () {
 				let $el = this.$refs.conversation.$el;
@@ -117,83 +119,91 @@
 				return $el.scrollHeight > $el.clientHeight;
 			},
 			getConversation () {
-				if(this.page === null || this.loading) {
-					return;
-				} else {
-					this.showNewConversationBar = false;
-					this.loading = true;
-					this.axios
-						.get(`/api/conversation/${this.$route.params.id}?page=${this.page}`)
-						.then(res => {
-							this.loading = false;
+				//If there all pages have been loaded or
+				//a new page is currently loading
+				//then do not send off another request
+				if(this.page === null || this.loading) return;
 
-							this.showModal = false;
-							this.users = res.data.Users;
-							this.name = res.data.name;
-							this.page= res.data.continuePagination ? this.page + 1 : null;
 
-							let $conversation = this.$refs.conversation.$el;
-							let scrollBottom = $conversation.scrollHeight - $conversation.scrollTop;
+				this.showNewConversationBar = false;
+				this.loading = true;
 
-							let ids = this.messages.map(m => m.id);
-							let uniqueMessages = res.data.Messages.filter(message => {
-								return !ids.includes(message.id);
-							});
-							this.messages.unshift(...uniqueMessages);
+				this.axios
+					.get(`/api/conversation/${this.$route.params.id}?page=${this.page}`)
+					.then(res => {
+						this.loading = false;
+						this.showModal = false;
 
-							//Scroll back to original position before new messages were added
-							this.$nextTick(() => {
-								$conversation.scrollTop = $conversation.scrollHeight - scrollBottom;
-							});
+						this.users = res.data.Users;
+						this.name = res.data.name;
+						this.page= res.data.continuePagination ? this.page + 1 : null;
 
-							//Keep loading conversations until there is a scroll bar
-							//To enable the scroll load mechanism
-							if(!this.hasConversationGotScrollbar()) {
-								this.getConversation();
-							}
-						})
-						.catch(e => {
-							this.loading = false;
-							this.$store.commit('setErrors', e.response.data.errors);
+						let $conversation = this.$refs.conversation.$el;
+						let scrollBottom = $conversation.scrollHeight - $conversation.scrollTop;
+
+						let ids = this.messages.map(m => m.id);
+						let uniqueMessages = res.data.Messages.filter(message => {
+							return !ids.includes(message.id);
 						});
-				}
+						this.messages.unshift(...uniqueMessages);
+
+						//Scroll back to original position before new messages were added
+						this.$nextTick(() => {
+							$conversation.scrollTop = $conversation.scrollHeight - scrollBottom;
+						});
+
+						//Keep loading conversations until there is a scroll bar
+						//To enable the scroll load mechanism
+						if(!this.hasConversationGotScrollbar()) {
+							this.getConversation();
+						}
+					})
+					.catch(e => {
+						this.loading = false;
+						this.$store.commit('setErrors', e.response.data.errors);
+					});
+			},
+			createConversation () {
+				let userIds = this.newConversationUsers.map(user => user.id);
+				userIds.push(+this.$store.state.userId);
+
+				//If there is no message or only one user (themselves)
+				//then do not create new conversation
+				if(!this.input.trim().length || userIds.length < 2) return;
+
+				this.axios
+					.post('/api/conversation', { userIds })
+					.then(res => {
+						this.name = res.data.name;
+						this.$router.push({
+							name: 'conversation',
+							params: { id: res.data.id }
+						});
+						this.sendMessage();
+					})
+					.catch(e => {
+						this.$store.commit('setErrors', e.response.data.errors);
+					});
 			},
 			sendMessage () {
 				if(!this.input.trim().length) return;
 
-				if(this.id) {
-					this.axios
-						.post('/api/message', {
-							content: this.input.trim(),
-							conversationId: this.id
-						})
-						.then(res => {
-							res.data.User = { username: this.$store.state.username }
-							this.messages.push(res.data);
-							this.input = '';
-						})
-						.catch(e => {
-							this.$store.commit('setErrors', e.response.data.errors);
-						});
-				} else {
-					let userIds = this.newConversationUsers.map(user => user.id);
-					userIds.push(+this.$store.state.userId);
-
-					this.axios
-						.post('/api/conversation', { userIds })
-						.then(res => {
-							this.name = res.data.name;
-							this.id = res.data.id;
-							this.$router.push({
-								name: 'conversation',
-								params: { id: res.data.id }
-							});
-							this.sendMessage();
-						})
-						.catch(e => {
-							this.$store.commit('setErrors', e.response.data.errors);
-						});
-				}
+				this.axios
+					.post('/api/message', {
+						content: this.input.trim(),
+						conversationId: +this.$route.params.id
+					})
+					.then(res => {
+						this.messages.push(
+							Object.assign(res.data, {
+								User: { username: this.$store.state.username }
+							})
+						);
+						this.input = '';
+					})
+					.catch(e => {
+						this.$store.commit('setErrors', e.response.data.errors);
+					});
 			},
 			pageLoad () {
 				this.clearData();
