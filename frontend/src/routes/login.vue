@@ -155,6 +155,10 @@
 					.then(res => {
 						this.$store.commit('setUser', res.data);
 						this.$router.push('app');
+
+						//Disconnect and reconnect to refresh session
+						this.$io.close();
+						this.$io.connect();
 					})
 					.catch(res => {
 						let errors = res.response.data.errors;
@@ -178,6 +182,10 @@
 					.then(res => {
 						this.$store.commit('setUser', res.data);
 						this.$router.push('app');
+
+						//Disconnect and reconnect to refresh session
+						this.$io.close();
+						this.$io.connect();
 					})
 					.catch(res => {
 						let errors = res.response.data.errors;

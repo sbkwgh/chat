@@ -11,12 +11,15 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
 app.set('trust proxy', true);
-app.use(session({
+
+const sessionMiddleware = session({
 	secret: env.SECRET || 'secret',
 	resave: false,
 	saveUninitialized: true,
 	cookie: { secure: env.NODE_ENV === 'production' }
-}))
+});
+
+app.use(sessionMiddleware);
 app.use(cookieParser(
 	env.SECRET || 'secret'
 ));
@@ -49,7 +52,7 @@ let server = app.listen(port, () => {
 	app.emit('server started');
 	app.set('server started', true);
 });
-sockets({ server, app });
+sockets({ server, app, sessionMiddleware });
 
 module.exports = { server, app };
 

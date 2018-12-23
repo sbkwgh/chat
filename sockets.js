@@ -1,8 +1,14 @@
-const socketIo = require('socket.io');
+const io = require('socket.io');
 
-module.exports = function ({ server, app }) {
-	app.set('io', socketIo(server));
+module.exports = function ({ server, app, sessionMiddleware }) {
+	app.set('io', io(server));
 
-	app.get('io').on('connection', () => {
-	})
+	//Associate express session with socket session
+	app.get('io').use((socket, next) => {
+		sessionMiddleware(socket.request, socket.request.res, next);
+	});
+
+	app.get('io').on('connection', socket => {
+		socket.on('message', data => require('./socket_routes')(data, socket));
+	});
 };

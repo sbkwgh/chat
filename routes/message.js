@@ -1,4 +1,4 @@
-let validation = require('../lib/validation');
+let validation = require('../lib/validateMiddleware');
 let messageController = require('../controllers/message');
 let router = require('express').Router();
 
