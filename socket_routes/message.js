@@ -1,6 +1,8 @@
 let socketErrorHandler = require('../lib/socketErrorHandler');
 let validate = require('../lib/validateSchema');
+
 let messageController = require('../controllers/message');
+let conversationController = require('../controllers/conversation');
 
 let messageValidationSchema = {
 	content: {
@@ -13,7 +15,7 @@ let messageValidationSchema = {
 	}
 };
 
-module.exports = async function (data, socket) {
+module.exports = async function (data, socket, io) {
 	try {
 		validate(messageValidationSchema, data);
 		if(!socket.request.session.authenticated) {
@@ -26,7 +28,16 @@ module.exports = async function (data, socket) {
 			conversationId: data.conversationId
 		});
 
-		//socket response
+
+		//Get the users in the conversation and the id for the socket
+		//(if it exists) and emit the message to them 
+		let userIds = await conversationController.getUserIds(data.conversationId);
+		userIds
+			.map(id => global.ioUsers[id])
+			.filter(id => id !== undefined)
+			.forEach(id => {
+				io.to(id).emit('message', message);
+			});
 	} catch (e) {
 		socketErrorHandler(e, socket);
 	}

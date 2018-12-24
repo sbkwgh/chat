@@ -194,11 +194,6 @@
 						conversationId: +this.$route.params.id
 					})
 					.then(res => {
-						this.messages.push(
-							Object.assign(res.data, {
-								User: { username: this.$store.state.username }
-							})
-						);
 						this.input = '';
 					})
 					.catch(e => {
@@ -220,6 +215,17 @@
 		},
 		mounted () {
 			this.pageLoad();
+			this.$io.on('message', message => {
+				if(message.ConversationId !== +this.$route.params.id) return;
+
+				this.messages.push(message);
+
+				this.$nextTick(() => {
+					let $conversation = this.$refs.conversation.$el;
+					$conversation.scrollTop = $conversation.scrollHeight;
+				});
+
+			});
 		}
 	};
 </script>

@@ -192,3 +192,17 @@ exports.get = async function (userId, conversationId, page) {
 		return json;
 	}
 };
+
+exports.getUserIds = async function (conversationId) {
+	let conversation = await Conversation.findById(conversationId, {
+		include: [{ model: User }]
+	});
+
+	if(!conversation) {
+		throw validationError(Sequelize, {
+			message: 'The conversation doesn\'t exist'
+		});
+	} else {
+		return conversation.Users.map(user => user.id);
+	}
+}

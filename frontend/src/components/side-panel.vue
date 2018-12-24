@@ -136,10 +136,22 @@
 							this.$store.commit('setErrors', e.response.data.errors);
 						});
 				}
+			},
+			updateConversations (updatedConversation) {
+				let index = this.conversations.findIndex(conversation => {
+					return conversation.id === updatedConversation.id;
+				});
+
+				if(index > -1) {
+					this.conversations.splice(index, 1);
+				}
+
+				this.conversations.unshift(updatedConversation);
 			}
 		},
 		mounted () {
 			this.getConversations();
+			this.$io.on('conversation', this.updateConversations);
 		}
 	};
 </script>
