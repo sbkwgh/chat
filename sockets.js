@@ -2,7 +2,20 @@ const io = require('socket.io');
 
 module.exports = function ({ server, app, sessionMiddleware }) {
 	app.set('io', io(server));
-	global.ioUsers = {};
+	app.set('io-users', {});
+
+	function addIoUser (socket) {
+		let ioUsers = app.get('io-users');
+		ioUsers[socket.request.session.userId] = socket.id;
+
+		app.set('io-users', ioUsers)
+	}
+	function removeIoUser (socket) {
+		let ioUsers = app.get('io-users');
+		delete ioUsers[socket.request.session.userId];
+
+		app.set('io-users', ioUsers)
+	}
 
 	//Associate express session with socket session
 	app.get('io').use((socket, next) => {
@@ -11,12 +24,8 @@ module.exports = function ({ server, app, sessionMiddleware }) {
 
 	app.get('io').on('connection', socket => {
 		if(socket.request.session.authenticated) {
-			//Add userId to hash of corresponding socket ids
-			//Remove from hash on disconnect
-			global.ioUsers[socket.request.session.userId] = socket.id;
-			socket.on('disconnect', () => delete global.ioUsers[socket.request.session.userId]);
-			
-			socket.on('message', data => require('./socket_routes')(data, socket));
+			addIoUser(socket);
+			socket.on('disconnect', () => { removeIoUser(socket); });
 		}
 
 	});

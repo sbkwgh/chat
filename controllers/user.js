@@ -1,4 +1,4 @@
-let validationError = require('../lib/validationError.js');
+let validationError = require('../lib/errors/validationError.js');
 let { User, sequelize } = require('../models');
 let bcrypt = require('bcrypt');
 

@@ -1,11 +1,11 @@
-let Type = require('../lib/type');
-let validationError = require('../lib/validationError');
+let Type = require('../lib/validation/type');
+let validationError = require('../lib/errors/validationError');
 let {
 	User,
 	Conversation,
 	Message,
 	UserConversation,
-	Sequelize,
+	Sequelize
 } = require('../models');
 let sequelizeInstance = require('../models').sequelize;
 

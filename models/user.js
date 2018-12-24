@@ -1,4 +1,4 @@
-let validationError = require('../lib/validationError');
+let validationError = require('../lib/errors/validationError');
 let randomColor = require('randomcolor');
 let bcrypt = require('bcrypt');
 
