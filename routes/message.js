@@ -47,7 +47,7 @@ router.post('/', validation(messageValidationSchema), async (req, res, next) => 
 		//(if it exists) and emit the message to them 
 		let userIds = await conversationController.getUserIds(req.body.conversationId);
 		userIds
-			.map(id => global.ioUsers[id])
+			.map(id => req.app.get('io-users')[id])
 			.filter(id => id !== undefined)
 			.forEach(id => {
 				req.app.get('io').to(id).emit('message', retMessage);
