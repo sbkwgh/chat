@@ -37,21 +37,28 @@
 
 			ref='conversation'
 		>
-			<conversation-message
-				v-for='(message, $i) in messages'
-				:context='[
-					messages[$i-1], messages[$i+1]
-				]'
-				:message='message'
-				:users='users'
-			></conversation-message>
+			<div class='conversation__main__container'>
+				<conversation-message
+					v-for='(message, $i) in messages'
+					:context='[
+						messages[$i-1], messages[$i+1]
+					]'
+					:message='message'
+					:users='users'
+				></conversation-message>
+				
+				<user-typing :users='users' :typing-users='typingUsers'></user-typing>
+			</div>
+		
 		</c-scroll-load>
+
 
 		<div class='conversation__input_bar'>
 			<textarea
 				class='input input--textarea conversation__input'
 				placeholder='Type your message here'
 				@keydown.enter.prevent='() => $route.params.id ? sendMessage() : createConversation()'
+				@keydown='sendTyping'
 				v-model='input'
 			></textarea>
 			<button
@@ -71,6 +78,7 @@
 	import CPromptModal from '../components/c-prompt-modal';
 	import CScrollLoad from '../components/c-scroll-load';
 	import NewConversationInput from '../components/new-conversation-input';
+	import UserTyping from '../components/user-typing';
 
 	export default {
 		name: 'conversation',
@@ -80,7 +88,8 @@
 			ConversationTimeBreak,
 			CPromptModal,
 			CScrollLoad,
-			NewConversationInput
+			NewConversationInput,
+			UserTyping
 		},
 		data () {
 			return {
@@ -89,6 +98,9 @@
 				users: [],
 				input: '',
 				page: 1,
+
+				typingUsers: [],
+				typingInterval: 0,
 
 				newConversationUsers: [],
 
@@ -200,6 +212,17 @@
 						this.$store.commit('setErrors', e.response.data.errors);
 					});
 			},
+			sendTyping () {
+				this.typingInterval = new Date();
+
+				setTimeout(() => {
+					if(new Date() - this.typingInterval > 2000) {
+						this.$io.emit('startTyping', {
+							conversationId: +this.$route.params.id
+						});
+					}
+				}, 2000);
+			},
 			pageLoad () {
 				this.clearData();
 
@@ -262,6 +285,13 @@
 			overflow-y: auto;
 			padding: 0 1rem;
 			padding-top: 1rem;
+
+			@at-root #{&}__container {
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+				justify-content: space-between;
+			}
 		}
 		@at-root #{&}__input_bar {
 			display: grid;
