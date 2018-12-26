@@ -37,7 +37,7 @@
 
 			ref='conversation'
 		>
-			<div class='conversation__main__container'>
+			<div class='conversation__main__conversations'>
 				<conversation-message
 					v-for='(message, $i) in messages'
 					:context='[
@@ -46,9 +46,9 @@
 					:message='message'
 					:users='users'
 				></conversation-message>
-				
-				<user-typing :users='users' :typing-users='typingUsers'></user-typing>
 			</div>
+
+			<user-typing :users='users' :typing-users='typingUsers'></user-typing>
 		
 		</c-scroll-load>
 
@@ -245,9 +245,7 @@
 				}
 			},
 			scrollToBottom (scrollIfNotAtBottom) {
-				let $conversation = this.$refs.conversation.$el;
-
-				console.log($conversation.scrollHeight - $conversation.scrollTop, $conversation.clientHeight)
+				let $conversation = this.$refs.conversation.$el;	
 				
 				//If currently scorlled to bottom or parameter set to true
 				if(
@@ -324,18 +322,18 @@
 				justify-self: end;
 			}
 		@at-root #{&}__main {
-			align-content: flex-end;
 			display: flex;
 			flex-direction: column;
+			height: 100%;
+			justify-content: space-between;
 			overflow-y: auto;
 			padding: 0 1rem;
 			padding-top: 1rem;
 
-			@at-root #{&}__container {
+			@at-root #{&}__conversations {			
+				align-content: flex-end;
 				display: flex;
 				flex-direction: column;
-				height: 100%;
-				justify-content: space-between;
 			}
 		}
 		@at-root #{&}__input_bar {

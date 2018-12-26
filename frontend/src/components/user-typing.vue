@@ -1,5 +1,5 @@
 <template>
-	<transition name='transition-slide-up'>
+	<transition name='transition-fade'>
 		<div class='user_typing' v-if='typingUsers.length'>
 			<div class='user_typing__users' v-if='users.length > 2'>{{userList}} {{typingUsers.length > 2 ? "are" : "is"}} typing</div>
 			<c-loading-dots></c-loading-dots>
