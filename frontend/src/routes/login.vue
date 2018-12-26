@@ -2,14 +2,14 @@
 	<div class='login'>
 		<transition name='transition-horizontal-slide' mode='out-in'>
 			<form key='login' class='login__form' @submit.prevent='doLogin' v-if='showLogin'>
-				<label>
+				<label class='label'>
 					<span>Username</span>
 					<input class='input' v-model='login.username'>
 					<span class='error' v-if='login.errors.username'>
 						{{login.errors.username}}
 					</span>
 				</label>
-				<label>
+				<label class='label'>
 					<span>Password</span>
 					<input class='input' type='password' v-model='login.password'>
 					<span class='error' v-if='login.errors.hash'>
@@ -32,21 +32,21 @@
 				</div>
 			</form>
 			<form key='account' class='login__form' @submit.prevent='create' v-else>
-				<label>
+				<label class='label'>
 					<span>Username</span>
 					<input class='input' v-model='createAccount.username'>
 					<span class='error' v-if='createAccount.errors.username'>
 						{{createAccount.errors.username}}
 					</span>
 				</label>
-				<label>
+				<label class='label'>
 					<span>Password</span>
 					<input class='input' type='password' v-model='createAccount.password'>
 					<span class='error' v-if='createAccount.errors.hash'>
 						{{createAccount.errors.hash}}
 					</span>
 				</label>
-				<label>
+				<label class='label'>
 					<span>Confirm password</span>
 					<input class='input' type='password' v-model='createAccount.confirmPassword'>
 					<span class='error' v-if='createAccount.errors.confirmPassword'>
