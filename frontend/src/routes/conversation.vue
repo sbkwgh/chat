@@ -127,7 +127,7 @@
 				this.newConversationUsers = [];
 
 				this.$io.emit('leaveConversation', {
-					conversationId: +this.$route.params.id 
+					conversationId: +this.$route.params.id || 0
 				});
 			},
 			hasConversationGotScrollbar () {
@@ -139,7 +139,7 @@
 				//If there all pages have been loaded or
 				//a new page is currently loading
 				//then do not send off another request
-				if(this.page === null || this.loading) return;
+				if(!this.$route.params.id || this.page === null || this.loading) return;
 
 
 				this.showNewConversationBar = false;
