@@ -1,5 +1,8 @@
 const io = require('socket.io');
 
+const typing = require('./socket_routes/typing');
+const conversationRooms = require('./socket_routes/conversationRooms');
+
 module.exports = function ({ server, app, sessionMiddleware }) {
 	app.set('io', io(server));
 	app.set('io-users', {});
@@ -25,7 +28,14 @@ module.exports = function ({ server, app, sessionMiddleware }) {
 	app.get('io').on('connection', socket => {
 		if(socket.request.session.authenticated) {
 			addIoUser(socket);
+
 			socket.on('disconnect', () => { removeIoUser(socket); });
+
+			socket.on('joinConversation', data => { conversationRooms.join(data, socket) });
+			socket.on('leaveConversation', data => { conversationRooms.leave(data, socket) });
+
+			socket.on('startTyping', data => { typing('startTyping', data, socket) });
+			socket.on('stopTyping', data => { typing('stopTyping', data, socket) });
 		}
 
 	});

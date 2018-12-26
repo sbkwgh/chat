@@ -100,7 +100,8 @@
 				page: 1,
 
 				typingUsers: [],
-				typingInterval: 0,
+				typingInterval: null,
+				typingTimer: null,
 
 				newConversationUsers: [],
 
@@ -124,6 +125,10 @@
 				this.messages = [];
 				this.page = 1;
 				this.newConversationUsers = [];
+
+				this.$io.emit('leaveConversation', {
+					conversationId: +this.$route.params.id 
+				});
 			},
 			hasConversationGotScrollbar () {
 				let $el = this.$refs.conversation.$el;
@@ -212,21 +217,55 @@
 						this.$store.commit('setErrors', e.response.data.errors);
 					});
 			},
-			sendTyping () {
-				this.typingInterval = new Date();
+			setTypingTimer () {
+				this.typingTimer = setTimeout(() => {
+					this.typingInterval = null;
 
-				setTimeout(() => {
-					if(new Date() - this.typingInterval > 2000) {
-						this.$io.emit('startTyping', {
-							conversationId: +this.$route.params.id
-						});
-					}
+					this.$io.emit('stopTyping', {
+						conversationId: +this.$route.params.id
+					});
 				}, 2000);
+			},
+			sendTyping (e) {
+				//Ignore enter keypress
+				if(e.keyCode === 13) return;
+
+				//if interval does not exist --> send startTyping, start timer
+				if(this.typingInterval === null) {
+					this.$io.emit('startTyping', {
+						conversationId: +this.$route.params.id
+					});
+
+					this.typingInterval = new Date();
+					this.setTypingTimer();
+				//if interval is less than 2 seconds --> clear timer 
+				} else if (new Date() - this.typingInterval < 2000) {
+					clearTimeout(this.typingTimer);
+					this.setTypingTimer();
+				}
+			},
+			scrollToBottom (scrollIfNotAtBottom) {
+				let $conversation = this.$refs.conversation.$el;
+
+				console.log($conversation.scrollHeight - $conversation.scrollTop, $conversation.clientHeight)
+				
+				//If currently scorlled to bottom or parameter set to true
+				if(
+					scrollIfNotAtBottom || 
+					$conversation.scrollHeight - $conversation.scrollTop === $conversation.clientHeight
+				) {			
+					this.$nextTick(() => {
+						$conversation.scrollTop = $conversation.scrollHeight;
+					});
+				}
 			},
 			pageLoad () {
 				this.clearData();
 
 				if(this.$route.params.id) {
+					this.$io.emit('joinConversation', {
+						conversationId: +this.$route.params.id 
+					});
 					this.getConversation();
 				} else {
 					this.showNewConversationBar = true;
@@ -238,16 +277,22 @@
 		},
 		mounted () {
 			this.pageLoad();
+
 			this.$io.on('message', message => {
 				if(message.ConversationId !== +this.$route.params.id) return;
 
 				this.messages.push(message);
+				this.scrollToBottom();
 
-				this.$nextTick(() => {
-					let $conversation = this.$refs.conversation.$el;
-					$conversation.scrollTop = $conversation.scrollHeight;
-				});
-
+			});
+			this.$io.on('startTyping', ({ userId }) => {
+				let user = this.users.find(u => u.id === userId);
+				this.typingUsers.push(user);
+				this.scrollToBottom();
+			});
+			this.$io.on('stopTyping', ({ userId }) => {
+				let index = this.typingUsers.findIndex(u => u.id === userId);
+				this.typingUsers.splice(index, 1);
 			});
 		}
 	};
