@@ -30,7 +30,7 @@ async function setTyping (event, data, socket) {
 			.to('conversation/' + conversationId)
 			.emit(event, { userId });	
 	} catch (e) {
-		socketErrorHandler(err, socket);
+		socketErrorHandler(e, socket);
 	}
 };
 

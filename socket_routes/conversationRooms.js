@@ -28,12 +28,23 @@ async function join (data, socket) {
 
 		socket.join('conversation/' + conversationId);
 	} catch (e) {
-		socketErrorHandler(err, socket);
+		socketErrorHandler(e, socket);
 	}
 };
 
 function leave (data, socket) {
-	socket.leave('conversation/' + data.conversationId)
+	try {
+		validateSchema({
+			conversationId: {
+				type: 'integer',
+				required: true
+			}
+		}, data);
+		
+		socket.leave('conversation/' + data.conversationId)
+	} catch (e) {
+		socketErrorHandler(e, socket);
+	}
 }
 
 module.exports = { join, leave };

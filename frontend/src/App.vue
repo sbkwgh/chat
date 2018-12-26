@@ -43,6 +43,11 @@ export default {
 		'$store.state.errors': function () {
 			this.showErrorModal = !!this.$store.state.errors;
 		}
+	},
+	mounted () {
+		this.$io.on('errors', data => {
+			this.$store.commit('setErrors', data.errors);
+		});
 	}
 };
 </script>
