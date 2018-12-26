@@ -10,7 +10,7 @@
 		</div>
 		<div
 			class='c_menu__menu'
-			:style='{ "left": left }'
+			:style='{ "left": left, "right": right }'
 			:class='{ "c_menu__menu--show": showMenu }'
 		>
 			<div
@@ -36,7 +36,8 @@
 		data () {
 			return {
 				showMenu: false,
-				left: 'calc(50% - 1rem)'
+				left: '0',
+				right: null
 			}
 		},
 		mounted () {
@@ -44,7 +45,8 @@
 			let rem = 16;
 
 			if(rect.right + 10*rem + 0.5*rem > window.innerWidth) {
-				this.left = 'calc(50% - 8.5rem)';
+				this.left = null;
+				this.right = '0';
 			}
 		}
 	};
@@ -58,42 +60,6 @@
 
 		@at-root #{&}__slot {
 			cursor: pointer;
-
-			&:after, &:before {
-				bottom: calc(100% - 0.5rem - 1px);
-				left: 50%;
-				border: solid transparent;
-				content: ' ';
-				height: 0;
-				width: 0;
-				opacity: 0;
-				position: absolute;
-				pointer-events: none;
-				z-index: 4;
-			}
-			&:after {
-				border-color: rgba(255, 255, 255, 0);
-				border-bottom-color: #fff;
-				border-width: 8px;
-				margin-left: -8px;
-				transition: opacity 0.2s, bottom 0.2s;
-			}
-
-			&:before {
-				border-color: rgba(84, 84, 84, 0);
-				border-bottom-color: #545454;
-				border-width: 9px;
-				margin-left: -9px;
-				transition: opacity 0.05s, bottom 0.2s;
-			}
-
-			@at-root #{&}--show:before, #{&}--show:after {
-				bottom: calc(100% - 1.5rem - 1px);
-				opacity: 1;
-			}
-			@at-root #{&}--show:before {
-				transition: opacity 0.25s, bottom 0.2s;
-			}
 		}
 
 		@at-root #{&}__overlay {
@@ -134,6 +100,7 @@
 		@at-root #{&}__item {
 			cursor: default;
 			padding: 0.5rem 1rem;
+			text-align: left;
 			transition: background-color 0.2s;
 
 			&:hover {
