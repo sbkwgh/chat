@@ -6,7 +6,7 @@
 			"conversation_message--margin": useMargin
 		}'
 	>
-		<conversation-time-break :message='message' :previous='context[0]'></conversation-time-break>
+		<conversation-time-break :message='message' :previous='adjacentMessages.previous'></conversation-time-break>
 		<div
 			class='conversation_message__username'
 			v-if='showUsername'
@@ -36,7 +36,7 @@
 				return this.message.User.username === this.$store.state.username;
 			},
 			showUsername () {
-				let prev = this.context[0];
+				let prev = this.adjacentMessages.previous;
 				let selfUsername = this.message.User.username;
 
 				//If first message or not from the same user
@@ -54,6 +54,14 @@
 					next &&
 					next.User.username !== this.message.User.username
 				);
+			},
+			adjacentMessages () {
+				let currentIndex = this.context.findIndex(m => m.id === this.message.id);
+
+				return {
+					previous: this.context[currentIndex-1],
+					next: this.context[currentIndex+1]
+				};
 			}
 		}
 	};

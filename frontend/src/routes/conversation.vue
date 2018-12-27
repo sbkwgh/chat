@@ -39,10 +39,8 @@
 		>
 			<div class='conversation__main__conversations'>
 				<conversation-message
-					v-for='(message, $i) in messages'
-					:context='[
-						messages[$i-1], messages[$i+1]
-					]'
+					v-for='message in messages'
+					:context='messages'
 					:message='message'
 					:users='users'
 				></conversation-message>
