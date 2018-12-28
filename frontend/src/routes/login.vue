@@ -4,7 +4,7 @@
 			<div class='login__hero'>
 				<div>
 					<h1>Hey!</h1>
-					<p>Make an account or login to start chatting</p>
+					<p>Make an account or log in to start chatting</p>
 				</div>
 			</div>
 		</div>
