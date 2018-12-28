@@ -7,8 +7,9 @@ import VueIo from './lib/vue-io';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faPaperPlane, faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { faCommentAlt } from '@fortawesome/free-regular-svg-icons';
 
-library.add(faPaperPlane, faAngleDown);
+library.add(faPaperPlane, faAngleDown, faCommentAlt);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 import App from './App';
