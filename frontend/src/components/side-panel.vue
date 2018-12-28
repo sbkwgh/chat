@@ -6,7 +6,7 @@
 				:items='userMenu'
 				@logout='logout'
 			>
-				{{$store.state.username}} <span>&#9660;</span>
+				{{$store.state.username}} <font-awesome-icon icon='angle-down'></font-awesome-icon>
 			</c-menu>
 			<button
 				class='side_panel__add button button--blue_border'
@@ -166,6 +166,14 @@
 		height: 100%;
 		width: 17rem;
 
+		@at-root #{&}__username {
+			svg {
+				color: $gray-5;
+				position: relative;
+				top: 0.1rem;
+			}
+		}
+
 		@at-root #{&}__header {
 			align-items: center;
 			align-self: center;
@@ -210,8 +218,9 @@
 		}
 		@at-root #{&}__conversations {
 			align-self: start;
-			border-top: thin solid $gray-1;
+			//border-top: thin solid $gray-1;
 			max-height: 100%;
+			padding: 0.25rem;
 			overflow-y: auto;
 
 			@at-root #{&}--empty {

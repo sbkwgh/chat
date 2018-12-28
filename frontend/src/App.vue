@@ -57,7 +57,7 @@ export default {
 	@import './assets/scss/elements.scss';
 	@import './assets/scss/transitions.scss';
 
-	@import url('https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500');
+	@import url('https://fonts.googleapis.com/css?family=Lato:400,700&subset=latin-ext');
 
 	* {
 		box-sizing: border-box;

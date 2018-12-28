@@ -70,6 +70,7 @@
 		}
 		@at-root #{&}__main {
 			font-weight: 300;
+			font-size: 0.9rem;
 			padding: 1rem;
 		}
 		@at-root #{&}__footer {

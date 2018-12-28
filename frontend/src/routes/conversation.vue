@@ -6,8 +6,7 @@
 			color='red'
 			@confirm='alert'
 		>
-			Are you sure you want to delete this conversation? <br/>
-			All your messages will be lost
+			Are you sure you want to delete this conversation?
 		</c-prompt-modal>
 		
 		<transition name='transition-fade' mode='out-in'>
@@ -47,13 +46,14 @@
 			</div>
 
 			<user-typing :users='users' :typing-users='typingUsers'></user-typing>
-		
+
+			<div style='padding: 2.5rem'></div>
 		</c-scroll-load>
 
 
-		<div class='conversation__input_bar'>
+		<div class='conversation__input_bar input'>
 			<textarea
-				class='input input--textarea conversation__input'
+				class='input--textarea conversation__input'
 				placeholder='Type your message here'
 				@keydown.enter.prevent='() => $route.params.id ? sendMessage() : createConversation()'
 				@keydown='sendTyping'
@@ -63,7 +63,7 @@
 				class='conversation__submit button button--blue'
 				@click='() => $route.params.id ? sendMessage() : createConversation()'
 			>
-				Send
+				<font-awesome-icon icon='paper-plane'></font-awesome-icon>
 			</button>
 		</div>
 	</div>
@@ -203,6 +203,10 @@
 			sendMessage () {
 				if(!this.input.trim().length) return;
 
+				this.$io.emit('stopTyping', {
+					conversationId: +this.$route.params.id
+				});
+
 				this.axios
 					.post('/api/message', {
 						content: this.input.trim(),
@@ -225,8 +229,8 @@
 				}, 2000);
 			},
 			sendTyping (e) {
-				//Ignore enter keypress
-				if(e.keyCode === 13) return;
+				//Ignore enter keypress or if no conversation created yet
+				if(e.keyCode === 13 || !this.$route.params.id) return;
 
 				//if interval does not exist --> send startTyping, start timer
 				if(this.typingInterval === null) {
@@ -299,7 +303,8 @@
 
 	.conversation {
 		display: grid;
-		grid-template-rows: 3rem auto 5rem;
+		grid-template-rows: 3rem auto;
+		position: relative;
 
 		@at-root #{&}__header {
 			border-bottom: thin solid $gray-1;
@@ -310,6 +315,7 @@
 		}
 			@at-root #{&}__title, #{&}__new_conversation_input {
 				align-self: center;
+				font-weight: bold;
 				grid-column: 2;
 				justify-self: center;
 			}
@@ -335,17 +341,38 @@
 			}
 		}
 		@at-root #{&}__input_bar {
-			display: grid;
-			grid-column-gap: 0.5rem;
-			grid-template-columns: auto 3rem;
-			padding: 1rem;
+			align-items: center;
+			background-color: #fff;
+			box-shadow: 0 5px 6px 0px $gray-1;
+			bottom: 0.5rem;
+			display: flex;
+			height: unset;
+			margin: 0 2rem;
+			padding: 0rem;
+			position: absolute;
+			width: calc(100% - 4rem);
 		}
 			@at-root #{&}__input {
-				height: 3rem;
+				border: 0;
+				font-family: $font-family;
+				height: 3.25rem;
+				padding: 0.75rem;
 				width: 100%;
 			}
 			@at-root #{&}__submit {
-				padding: 0;
+				border-radius: 100%;
+				box-shadow: 0 4px 6px rgba($blue-5, 0.25);
+				font-size: 1rem;
+				height: 2rem;
+				margin: 0.5rem;
+				padding: 0.5rem;
+				width: 2rem;
+
+				svg {
+					left: -0.1rem;
+					position: relative;
+					top: -0.15rem;
+				}
 			}
 	}
 </style>

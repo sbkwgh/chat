@@ -93,7 +93,7 @@
 
 		@at-root #{&}__message {
 			background-color: $gray-0;
-			border-radius: 0.5rem 0.5rem 0.5rem 0;
+			border-radius: 1rem;
 			font-family: $font-family;
 			font-size: 0.85rem;
 			font-weight: 300;
@@ -105,7 +105,7 @@
 
 			@at-root #{&}--self {
 				background-color: $blue-2;
-				border-radius: 0.5rem 0.5rem 0 0.5rem;
+				border-radius: 1rem;
 				color: #fff;
 			}
 		}

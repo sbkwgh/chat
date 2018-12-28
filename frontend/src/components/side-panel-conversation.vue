@@ -76,14 +76,15 @@
 
 	.side_panel_conversation {
 		background-color: #fff;
-		border-bottom: thin solid $gray-1;
+		//border-bottom: thin solid $gray-1;
+		border-radius: 0.25rem;
 		cursor: default;
 		display: flex;
 		height: 5rem;
+		margin: 0.5rem;
 		padding: 0.5rem;
 		position: relative;
 		transition: background-color 0.2s;
-		width: 100%;
 
 		&:hover, &:focus {
 			background-color: $gray-hover;
@@ -91,7 +92,8 @@
 		}
 
 		&::after {
-			background-color: $gray-4;
+			background-color: $gray-3;
+			border-radius: 0.25rem 0 0 0.25rem;
 			content: '';
 			height: 100%;
 			left: 0;
@@ -103,10 +105,15 @@
 		}
 
 		@at-root #{&}--selected {
-			background-color: $gray-hover;
+			background-color: $gray-0;
 
 			&::after {
 				opacity: 1;
+			}
+
+			&:hover, &:focus {
+				background-color: $gray-0;
+				outline: none;
 			}
 		}
 
@@ -173,9 +180,10 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			width: 11.75rem;
+			width: 10.25rem;
 		}
 		@at-root #{&}__conversation_content {
+			font-size: 0.9rem;
 			margin-left: 0.5rem;
 		}
 		@at-root #{&}__snippet {

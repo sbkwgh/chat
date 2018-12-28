@@ -99,6 +99,7 @@
 		}
 		@at-root #{&}__item {
 			cursor: default;
+			font-size: 0.9rem;
 			padding: 0.5rem 1rem;
 			text-align: left;
 			transition: background-color 0.2s;

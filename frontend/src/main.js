@@ -4,6 +4,13 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import VueIo from './lib/vue-io';
 
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faPaperPlane, faAngleDown } from '@fortawesome/free-solid-svg-icons';
+
+library.add(faPaperPlane, faAngleDown);
+Vue.component('font-awesome-icon', FontAwesomeIcon);
+
 import App from './App';
 import store from './store';
 import getCookies from './lib/getCookies';
