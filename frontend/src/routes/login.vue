@@ -1,6 +1,16 @@
 <template>
 	<div class='login'>
-		<transition name='transition-horizontal-slide' mode='out-in'>
+		<div class='login__container login__container--hero'>
+			<div class='login__hero'>
+				<div>
+					<h1>Hey!</h1>
+					<p>Make an account or login to start chatting</p>
+				</div>
+			</div>
+		</div>
+
+		<div class='login__container'>
+			<transition name='transition-horizontal-slide' mode='out-in'>
 			<form key='login' class='login__form' @submit.prevent='doLogin' v-if='showLogin'>
 				<label class='label'>
 					<span>Username</span>
@@ -67,7 +77,8 @@
 					</span>
 				</div>
 			</form>
-		</transition>
+			</transition>
+		</div>
 	</div>
 </template>
 
@@ -209,12 +220,38 @@
 	.login {
 		align-items: center;
 		display: grid;
+		grid-template-columns: auto 40rem;
 		height: 100%;
-		justify-content: center;
+
+		@at-root #{&}__hero {
+			align-items: center;
+			background: rgb(17,86,191);
+			background: linear-gradient(158deg, rgba(17,86,191,0.9) 0%, rgba(33,150,243,0.9) 71%, rgba(69,223,196,0.9) 100%); 
+			color: #fff;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			width: 100%;
+
+			h1 {
+				font-size: 3rem;
+				margin-bottom: 0;
+			}
+			p {
+				font-size: 1.25rem;
+			}
+		}
+
+		@at-root #{&}__container {
+			display: flex;
+			justify-content: center;
+
+			@at-root #{&}--hero {
+				align-self: stretch;
+			}
+		}
 
 		@at-root #{&}__form {
-			border: thin solid $gray-3;
-			border-radius: 0.25rem;
 			display: grid;
 			grid-row-gap: 0.5rem;
 			padding: 2rem;
