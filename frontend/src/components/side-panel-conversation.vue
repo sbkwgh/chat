@@ -1,7 +1,10 @@
 <template>
 	<div
 		class='side_panel_conversation'
-		:class='{ "side_panel_conversation--selected": selected }'
+		:class='{
+			"side_panel_conversation--selected": selected,
+			"side_panel_conversation--unread": unread
+		}'
 		@click='goToConversation'
 		@keydown.enter='goToConversation'
 	>
@@ -40,6 +43,11 @@
 				return (
 					this.$route.name === 'conversation' &&
 					+this.$route.params.id === this.conversation.id
+				);
+			},
+			unread () {	
+				return (
+					new Date(this.conversation.lastRead) - new Date(this.conversation.Messages[0].createdAt) < 0
 				);
 			},
 			username () {
@@ -115,6 +123,13 @@
 				background-color: $gray-0;
 				outline: none;
 			}
+		}
+
+		@at-root #{&}--unread {
+			background-color: transparentize($blue-1, 0.7);
+			font-weight: bold;
+
+			&:hover { background-color: transparentize($blue-1, 0.7); }
 		}
 
 		@at-root #{&}__profile_picture {

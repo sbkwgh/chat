@@ -60,4 +60,21 @@ router.get('/:conversationId', validation(getPostSchema), async (req, res, next)
 	} catch (e) { next(e); }
 });
 
+let putPostSchema = {
+	params: {
+		conversationId: {
+			required: true,
+			type: 'string(integer)'
+		}
+	}
+};
+router.put('/:conversationId', validation(putPostSchema), async (req, res, next) => {
+	try {
+		let conversationId = +req.params.conversationId;
+		res.json(
+			await conversationController.updateLastRead(conversationId, req.session.userId)
+		);
+	} catch (e) { next(e); }
+})
+
 module.exports = router;

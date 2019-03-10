@@ -49,6 +49,11 @@ exports.create = async function (userIds, name) {
 	}
 };
 
+/*
+	userId of current user
+	page to search on (offset)
+	searchString of usernames given by user
+*/
 exports.getFromUser = async function (userId, page, searchString) {
 	/*
 		Should return an object like:
@@ -65,6 +70,7 @@ exports.getFromUser = async function (userId, page, searchString) {
 
 	*/
 	
+	//Assuming that search string is a list of usernames
 	let usernames = (searchString || '').split(/\s+/);
 	let replacementsObj = {
 		offset: (page || 0) * 10,
@@ -83,8 +89,10 @@ exports.getFromUser = async function (userId, page, searchString) {
 		SELECT
 			conversations.*,
 			messages.content as 'Messages.content',
+			messages.createdAt as 'Messages.createdAt',
 			users.username as 'User.username',
-			users.id as 'User.id'
+			users.id as 'User.id',
+			userconversations.lastRead as 'lastRead'
 
 		FROM
 			(
@@ -107,6 +115,8 @@ exports.getFromUser = async function (userId, page, searchString) {
 				)
 		JOIN users
 			ON users.id = messages.UserId
+		JOIN userconversations
+			ON userconversations.UserId = users.id AND userconversations.ConversationId = conversations.id
 
 		ORDER BY messages.id DESC
 
@@ -125,6 +135,7 @@ exports.getFromUser = async function (userId, page, searchString) {
 
 		json.Messages = [{
 			content: json['Messages.content'],
+			createdAt: json['Messages.createdAt'],
 			User: {
 				id: json['User.id'],
 				username: json['User.username']
@@ -132,6 +143,7 @@ exports.getFromUser = async function (userId, page, searchString) {
 		}];
 
 		delete json['Messages.content'];
+		delete json['Messages.createdAt'];
 		delete json['User.id'];
 		delete json['User.username'];
 
@@ -204,5 +216,22 @@ exports.getUserIds = async function (conversationId) {
 		});
 	} else {
 		return conversation.Users.map(user => user.id);
+	}
+}
+
+exports.updateLastRead = async function (ConversationId, UserId) {
+	let res = await UserConversation.update({
+		lastRead: new Date()
+	}, {
+		where: { ConversationId, UserId }
+	});
+
+	//Affected rows should always be 1
+	if(res[0] !== 1) {
+		throw validationError(Sequelize, {
+			message: 'Either the conversationId or UserId is invalid'
+		});
+	} else {
+		return true;
 	}
 }

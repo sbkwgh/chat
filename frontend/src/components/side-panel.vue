@@ -39,19 +39,19 @@
 		</div>
 		<c-scroll-load
 			class='side_panel__conversations'
-			:class='{ "side_panel__conversations--empty": !conversations.length }'
+			:class='{ "side_panel__conversations--empty": !$store.state.conversations.length }'
 
 			:loading='loading'
 			position='bottom'
 			@load='getConversations'
 		>
 			<side-panel-conversation
-				v-for='conversation in conversations'
+				v-for='conversation in $store.state.conversations'
 				:conversation='conversation'
 				tabindex='0'
 			></side-panel-conversation>
 
-			<div v-if='!conversations.length && !loading'>
+			<div v-if='!$store.state.conversations.length && !loading'>
 				No conversations
 			</div>
 		</c-scroll-load>
@@ -72,7 +72,6 @@
 		},
 		data () {
 			return {
-				conversations: [],
 				page: 0,
 
 				loading: false,
@@ -89,7 +88,7 @@
 			//When typing for each letter clear the data
 			searchQuery () {
 				this.page = 0;
-				this.conversations = [];
+				this.$store.commit('clearConversations');
 			}
 		},
 		methods: {
@@ -107,7 +106,7 @@
 			setShowCloseButton (val) {
 				if(this.showCloseButton !== val) {
 					this.showCloseButton = val;
-					this.conversations = [];
+					this.$store.commit('clearConversations');
 					this.page = 0;
 
 					if(!val) {
@@ -128,7 +127,7 @@
 						.get(`/api/user/${this.$store.state.userId}/conversations`, { params })
 						.then(res => {
 							this.loading = false;
-							this.conversations.push(...res.data.Conversations);
+							this.$store.commit('addConversations', res.data.Conversations);
 							this.page = res.data.continuePagination ? this.page+1 : null;
 						})
 						.catch(e => {
@@ -138,15 +137,15 @@
 				}
 			},
 			updateConversations (updatedConversation) {
-				let index = this.conversations.findIndex(conversation => {
-					return conversation.id === updatedConversation.id;
-				});
-
-				if(index > -1) {
-					this.conversations.splice(index, 1);
+				//If conversation is already open, assume message has been read
+				if(
+					this.$route.name === 'conversation' &&
+					this.$route.params.id &&
+					+this.$route.params.id === updatedConversation.id
+				) {
+					updatedConversation.lastRead = new Date() + '';
 				}
-
-				this.conversations.unshift(updatedConversation);
+				this.$store.commit('updateUnshiftConversation', updatedConversation);
 			}
 		},
 		mounted () {

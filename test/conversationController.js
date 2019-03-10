@@ -4,7 +4,7 @@ let chai = require('chai');
 chai.use(require('chai-things'));
 
 let models = require('../models');
-	let { Sequelize, User, Conversation, Message } = models;
+	let { Sequelize, User, Conversation, Message, UserConversation } = models;
 	let sequelizeInstance = models.sequelize;
 let conversationController = require('../controllers/conversation');
 let messageController = require('../controllers/message');
@@ -99,6 +99,32 @@ describe('Conversation controller', () => {
 			}
 		});
 	});
+	describe('updateLastRead', () => {
+		it('should update the time when last read', async () => {
+			let uc = await UserConversation.findOne({
+				where: { UserId: 1, ConversationId: 1 }
+			});
+			expect(uc.lastRead.getTime() === (new Date(0)).getTime()).to.be.true;
+
+			let res = await conversationController.updateLastRead(1, 1);
+			res.should.equal(true);
+
+			let ucUpdated = await UserConversation.findOne({
+				where: { UserId: 1, ConversationId: 1 }
+			});
+			expect(ucUpdated.lastRead.toDateString() === (new Date()).toDateString() ).to.be.true;
+		});
+
+		it('should throw an error if user or conversation does not exist', async () => {
+			try {
+				let uc = await UserConversation.findOne({
+					where: { UserId: 10, ConversationId: 1 }
+				});
+			} catch (e) {
+				e.errors.should.contain.something.with.property('message', 'Either the conversationId or UserId is invalid');
+			}
+		});
+	});
 	describe('getFromUser', () => {
 		before(async () => {
 			await messageController.create({
@@ -124,6 +150,7 @@ describe('Conversation controller', () => {
 
 			res.Conversations.should.have.length(1);
 			res.Conversations[0].should.have.property('name', 'user_two');
+			res.Conversations[0].should.have.property('lastRead');
 			res.Conversations[0].Users.should.contain.something.with.property('username', 'user_one');
 			res.Conversations[0].Users.should.contain.something.with.property('username', 'user_two');
 			res.Conversations[0].Messages[0].should.have.property('content', 'message 3');
@@ -199,6 +226,8 @@ describe('Conversation controller', () => {
 			conversations.Conversations.should.have.length(2);
 			conversations.Conversations[0].Messages[0].should.have.property('content', 'search ' + (firstId+1) );
 			conversations.Conversations[1].Messages[0].should.have.property('content', 'search ' + firstId);
+
+			conversations.Conversations[0].should.have.property('lastRead');
 		});
 	})
 })

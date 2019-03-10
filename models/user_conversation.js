@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
-	let User_Conversation = sequelize.define('UserConversation', {}, {});
+	let User_Conversation = sequelize.define('UserConversation', {
+		lastRead: {
+			type: DataTypes.DATE,
+			defaultValue: new Date(0)
+		}
+	}, {});
 
 	User_Conversation.associate = function(models) {
 		User_Conversation.belongsTo(models.User);

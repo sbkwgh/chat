@@ -200,6 +200,16 @@
 						this.$store.commit('setErrors', e.response.data.errors);
 					});
 			},
+			updateLastRead () {
+				this.axios.put('/api/conversation/' + this.$route.params.id);
+
+				//Conversation panel might not have loaded request, so try again in 200 msec
+				if(!this.$store.state.conversations.length) {
+					setTimeout(this.updateLastRead, 200);
+				} else {
+					this.$store.commit('updateConversationLastRead', +this.$route.params.id);
+				}
+			},
 			sendMessage () {
 				if(!this.input.trim().length) return;
 
@@ -267,6 +277,7 @@
 						conversationId: +this.$route.params.id 
 					});
 					this.getConversation();
+					this.updateLastRead();
 				} else {
 					this.showNewConversationBar = true;
 				}
@@ -283,7 +294,7 @@
 
 				this.messages.push(message);
 				this.scrollToBottom();
-
+				this.updateLastRead();
 			});
 			this.$io.on('startTyping', ({ userId }) => {
 				let user = this.users.find(u => u.id === userId);

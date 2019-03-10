@@ -9,7 +9,8 @@ const store = new Vuex.Store({
 	state: {
 		username: null,
 		userId: null,
-		errors: null
+		errors: null,
+		conversations: []
 	},
 	mutations: {
 		setUser (state, user) {
@@ -22,6 +23,33 @@ const store = new Vuex.Store({
 			} else {
 				state.errors = errors.map(e => e.message);
 			}
+		},
+		clearConversations (state, conversations) {
+			state.conversations = [];
+		},
+		addConversations (state, conversations) {
+			state.conversations.push(...conversations);
+		},
+		updateConversationLastRead (state, id) {
+			let index = state.conversations.findIndex(conversation => {
+				return conversation.id === id;
+			});
+
+			let conversation = state.conversations[index];
+			conversation.lastRead = new Date() + '';
+
+			state.conversations.splice(index, 1, conversation);
+		},
+		updateUnshiftConversation (state, updatedConversation) {
+			let index = state.conversations.findIndex(conversation => {
+				return conversation.id === updatedConversation.id;
+			});
+
+			if(index > -1) {
+				state.conversations.splice(index, 1);
+			}
+
+			state.conversations.unshift(updatedConversation);
 		}
 	}
 });
