@@ -13,9 +13,16 @@
 			v-model='showEditModal'
 			button-text='Change name'
 			color='blue'
+			@confirm='saveEditModalModelName'
 		>
 			Enter the new name for your chat below
-			<input type='text' placeholder='Chat name' class='input' style='margin-top: 0.5rem;'>
+			<input
+				type='text'
+				placeholder='Chat name'
+				class='input'
+				style='margin-top: 0.5rem;'
+				v-model='editModalModel'
+			/>
 		</c-prompt-modal>
 		
 		<transition name='transition-fade' mode='out-in'>
@@ -120,8 +127,12 @@
 					{ text: 'Delete', event: 'delete' },
 					{ text: 'Edit chat name', event: 'edit' }
 				],
+				
 				showDeleteModal: false,
+				
 				showEditModal: false,
+				editModalModel: '',
+
 				showNewConversationBar: !this.$route.params.id,
 
 				loading: false
@@ -130,6 +141,26 @@
 		methods: {
 			alert () {
 				console.log('Confirm')
+			},
+			saveEditModalModelName () {
+				let name = this.editModalModel.trim();
+
+				if(name.length) {
+					this.axios
+						.put(`/api/conversation/${this.$route.params.id}/name`, { name })
+						.then(res => {
+							this.name = name;
+							this.$store.commit(
+								'updateConversationName',
+								{ id: +this.$route.params.id, name }
+							);
+						})
+						.catch(e => {
+							this.$store.commit('setErrors', e.response.data.errors);
+						});
+				}
+
+				this.editModalModel = '';
 			},
 			clearData () {
 				this.name = '';

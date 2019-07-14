@@ -19,8 +19,6 @@ module.exports = (sequelize, DataTypes) => {
 	});
 
 	Conversation.prototype.setName = async function (userId) {
-		if(this.name) return this.toJSON();
-
 		let json = this.toJSON();
 
 		if(!this.Users || this.Users.length < 2) {
@@ -35,7 +33,9 @@ module.exports = (sequelize, DataTypes) => {
 			json.Users = users.map(u => u.toJSON());
 		}
 
-		if(json.Users.length === 2) {
+		if(this.name) { 
+			return json;
+		} else if(json.Users.length === 2) {
 			json.name = json.Users.find(u => u.id !== userId).username;
 		} else {
 			json.name = json.Users.map(u => u.username).join(', ');

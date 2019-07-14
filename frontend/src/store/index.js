@@ -50,6 +50,16 @@ const store = new Vuex.Store({
 			}
 
 			state.conversations.unshift(updatedConversation);
+		},
+		updateConversationName (state, { id, name }) {
+			let index = state.conversations.findIndex(conversation => {
+				return conversation.id === id;
+			});
+
+			let conversation = state.conversations[index];
+			conversation.name = name;
+
+			state.conversations.splice(index, 1, conversation);
 		}
 	}
 });
