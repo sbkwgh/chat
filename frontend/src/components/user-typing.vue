@@ -16,6 +16,8 @@
 		components: { CLoadingDots },
 		computed: {
 			userList () {
+				this.typingUsers
+				debugger;
 				return this.typingUsers
 					.map(u => u.username)
 					.join(', ')

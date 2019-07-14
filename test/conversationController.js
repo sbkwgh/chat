@@ -200,6 +200,34 @@ describe('Conversation controller', () => {
 		});
 	});
 
+	describe('updateName', () => {
+		it('should update conversation name', async () => {
+			let res = await conversationController.updateName(1, 1, 'new name');
+			let conversation = await conversationController.get(1, 1);
+			
+			res.should.equal(true);
+			conversation.should.have.property('name', 'new name');
+		})
+		it('should return an error if the conversation does not exist', async () => {
+			try {
+				await conversationController.updateName(10, 1, 'new name');
+
+				expect(true).to.be.false;
+			} catch (e) {
+				e.errors.should.contain.something.with.property('message', 'Either the conversationId or userId is invalid');
+			}
+		});
+		it('should return an error if the user is not part of the conversation', async () => {
+			try {
+				await conversationController.updateName(1, 10, 'new name');
+
+				expect(true).to.be.false;
+			} catch (e) {
+				e.errors.should.contain.something.with.property('message', 'Either the conversationId or userId is invalid');
+			}
+		});
+	});
+
 	describe('getFromUser search', () => {
 		let firstId;
 		before(async () => {

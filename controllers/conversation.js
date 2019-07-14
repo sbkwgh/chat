@@ -217,13 +217,13 @@ exports.getUserIds = async function (conversationId) {
 	} else {
 		return conversation.Users.map(user => user.id);
 	}
-}
+};
 
-exports.updateLastRead = async function (ConversationId, UserId) {
+exports.updateLastRead = async function (conversationId, userId) {
 	let res = await UserConversation.update({
 		lastRead: new Date()
 	}, {
-		where: { ConversationId, UserId }
+		where: { ConversationId: conversationId, UserId: userId }
 	});
 
 	//Affected rows should always be 1
@@ -234,4 +234,25 @@ exports.updateLastRead = async function (ConversationId, UserId) {
 	} else {
 		return true;
 	}
-}
+};
+
+exports.updateName = async function (conversationId, userId, name) {
+	let conversation = await Conversation.findById(conversationId, {
+		include: [{ model: User }]
+	});
+	
+	if(
+		!conversation ||
+		conversation.Users.find(u => u.id === userId) === undefined
+	) {
+		throw validationError(Sequelize, {
+			message: 'Either the conversationId or userId is invalid'
+		});
+	}
+
+	let res = await Conversation.update({ name }, {
+		where: { id: conversationId }
+	});
+
+	return true;
+};

@@ -75,6 +75,31 @@ router.put('/:conversationId', validation(putPostSchema), async (req, res, next)
 			await conversationController.updateLastRead(conversationId, req.session.userId)
 		);
 	} catch (e) { next(e); }
-})
+});
+
+let putNameSchema = {
+	params: {
+		conversationId: {
+			required: true,
+			type: 'string(integer)'
+		}
+	},
+	body: {
+		name: {
+			required: true,
+			type: 'string'
+		}
+	}
+};
+router.put('/:conversationId/name', validation(putNameSchema), async (req, res, next) => {
+	try {
+		let conversationId = +req.params.conversationId;
+		let name = req.body.name;
+
+		res.json(
+			await conversationController.updateName(conversationId, req.session.userId, name)
+		);
+	} catch (e) { next(e); }
+});
 
 module.exports = router;

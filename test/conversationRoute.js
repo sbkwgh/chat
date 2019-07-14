@@ -12,6 +12,7 @@ let models = require('../models');
 	let sequelizeInstance = models.sequelize;
 let userController = require('../controllers/user.js');
 let messageController = require('../controllers/message.js');
+let conversationController = require('../controllers/conversation.js');
 
 let userAgent = chai.request.agent(server);
 let userTwoAgent = chai.request.agent(server);
@@ -171,6 +172,44 @@ describe('Conversation route', () => {
 		it('should return an error if user is not logged in', done => {
 			chai.request(server)
 				.get('/api/conversation/1')
+				.end((err, res) => {
+					res.body.errors.should.contain.something.with.property('message', 'Request not authorized')
+					done();
+				})
+		});
+	});
+
+	describe('PUT /:id/name', () => {
+		it('should update the name', async () => {
+			let agent = chai.request.agent(server);
+			await agent
+				.post('/api/user/login')
+				.set('content-type', 'application/json')
+				.send({
+					username: 'user_one',
+					password: 'password'
+				})
+
+
+			let res = await agent
+				.put('/api/conversation/1/name')
+				.set('content-type', 'application/json')
+				.send({
+					name: 'new name'
+				});
+
+			res.body.should.equal(true);
+
+			let conversation = await conversationController.get(1, 1);
+			conversation.name.should.equal('new name');
+		});
+		it('should return an error if user is not logged in', done => {
+			chai.request(server)
+				.put('/api/conversation/1/name')
+				.set('content-type', 'application/json')
+				.send({
+					name: 'new name'
+				})
 				.end((err, res) => {
 					res.body.errors.should.contain.something.with.property('message', 'Request not authorized')
 					done();

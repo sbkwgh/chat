@@ -1,12 +1,21 @@
 <template>
 	<div class='conversation'>
 		<c-prompt-modal
-			v-model='showModal'
+			v-model='showDeleteModal'
 			button-text='OK, delete'
 			color='red'
 			@confirm='alert'
 		>
 			Are you sure you want to delete this conversation?
+		</c-prompt-modal>
+
+		<c-prompt-modal
+			v-model='showEditModal'
+			button-text='Change name'
+			color='blue'
+		>
+			Enter the new name for your chat below
+			<input type='text' placeholder='Chat name' class='input' style='margin-top: 0.5rem;'>
 		</c-prompt-modal>
 		
 		<transition name='transition-fade' mode='out-in'>
@@ -23,7 +32,11 @@
 			<div class='conversation__header' key='header' v-else>
 				<div class='conversation__title'>{{name}}</div>
 				<div class='conversation__actions'>
-					<c-menu :items='settingsItems' @delete='showModal = true'>Settings</c-menu>
+					<c-menu
+						:items='settingsItems'
+						@delete='showDeleteModal = true'
+						@edit='showEditModal = true'
+					>Settings</c-menu>
 				</div>
 			</div>
 		</transition>
@@ -105,10 +118,10 @@
 
 				settingsItems: [
 					{ text: 'Delete', event: 'delete' },
-					{ text: 'Mute', event: 'mute' },
-					{ text: 'Report', event: 'report' }
+					{ text: 'Edit chat name', event: 'edit' }
 				],
-				showModal: false,
+				showDeleteModal: false,
+				showEditModal: false,
 				showNewConversationBar: !this.$route.params.id,
 
 				loading: false
