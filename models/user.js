@@ -13,17 +13,17 @@ module.exports = (sequelize, DataTypes) => {
 			validate: {
 				maxLength (val) {
 					if(val.trim().length > 30) {
-						throw new sequelize.ValidationError('Username can\'t be longer than 30 characters');
+						throw new Error('Username can\'t be longer than 30 characters');
 					}
 				},
 				minLength (val) {
 					if(val.trim().length < 6) {
-						throw new sequelize.ValidationError('Username must be at least 6 characters');
+						throw new Error('Username must be at least 6 characters');
 					}
 				},
 				containsBlankCharacters (val) {
 					if(val.trim().match(/\s/g)) {
-						throw new sequelize.ValidationError('Username can\'t contain blank characters');
+						throw new Error('Username can\'t contain blank characters');
 					}
 				}
 			}
@@ -39,12 +39,12 @@ module.exports = (sequelize, DataTypes) => {
 			validate: {
 				maxLength (val) {
 					if(val.length > 30) {
-						throw new sequelize.ValidationError('Password can\'t be longer than 100 characters');
+						throw new Error('Password can\'t be longer than 100 characters');
 					}
 				},
 				minLength (val) {
 					if(val.length < 6) {
-						throw new sequelize.ValidationError('Password must be at least 8 characters');
+						throw new Error('Password must be at least 8 characters');
 					}
 				}
 			}

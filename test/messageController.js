@@ -39,7 +39,7 @@ describe('Message controller', () => {
 			});
 			message.should.have.property('content', 'test');
 
-			let res = await Message.findById(1);
+			let res = await Message.findByPk(1);
 			res.should.have.property('content', 'test');
 		});
 		it('should return an error if message length is 0', async () => {

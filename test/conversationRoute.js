@@ -108,7 +108,7 @@ describe('Conversation route', () => {
 					userIds: [1,2,3]
 				});
 
-			let conversation = await Conversation.findById(1);
+			let conversation = await Conversation.findByPk(1);
 			conversation.should.not.be.null;
 		});
 	});

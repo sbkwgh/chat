@@ -5,12 +5,12 @@ module.exports = (sequelize, DataTypes) => {
 			validate: {
 				isString (val) {
 					if(typeof val !== 'string') {
-						throw new sequelize.ValidationError('Message must be a string');
+						throw new Error('Message must be a string');
 					}
 				},
 				minLength (val) {
 					if(!String(val).trim().length) {
-						throw new sequelize.ValidationError('Message cannot be blank');
+						throw new Error('Message cannot be blank');
 					}
 				}
 			},

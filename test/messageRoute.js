@@ -111,7 +111,7 @@ describe('Message route', () => {
 
 			res.body.should.have.property('content', 'test');
 
-			let message = await Message.findById(1);
+			let message = await Message.findByPk(1);
 
 			message.should.have.property('content', 'test');
 			message.should.have.property('UserId', 1);

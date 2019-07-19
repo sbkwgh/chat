@@ -1,5 +1,5 @@
 let validationError = require('../lib/errors/validationError.js');
-let { User, sequelize } = require('../models');
+let { User, Sequelize } = require('../models');
 let bcrypt = require('bcrypt');
 
 exports.create = async function (username , password) {
@@ -11,14 +11,14 @@ exports.create = async function (username , password) {
 };
 
 exports.get = async function (userId) {
-	let user = await User.findById(userId, {
+	let user = await User.findByPk(userId, {
 		attributes: { exclude: ['hash'] }
 	});
 
 	if(user) {
 		return user.toJSON();
 	} else {
-		throw validationError(sequelize, {
+		throw validationError({
 			message: 'User does not exist',
 			value: userId
 		});
@@ -30,7 +30,7 @@ exports.getAllBeginningWith = async function (username) {
 		attributes: { exclude: ['hash'] },
 		where: {
 			username: {
-				[sequelize.Op.like]: username + '%'
+				[Sequelize.Op.like]: username + '%'
 			}
 		},
 		limit: 10
@@ -53,7 +53,7 @@ exports.login = async function (username, password) {
 	});
 
 	if(!user) {
-		throw validationError(sequelize, {
+		throw validationError({
 			message: 'Username is incorrect',
 			path: 'username',
 			value: username
@@ -66,7 +66,7 @@ exports.login = async function (username, password) {
 			delete userJson.hash;
 			return userJson;
 		} else {
-			throw validationError(sequelize, {
+			throw validationError({
 				message: 'Password is incorrect',
 				path: 'hash',
 				value: password

@@ -43,7 +43,7 @@ describe('User route', () => {
 			res.should.have.cookie('username', 'username');
 			res.should.have.cookie('id', '1');
 
-			let user = await User.findById(1);
+			let user = await User.findByPk(1);
 			user.should.not.be.null;
 			user.should.have.property('username', 'username');
 		});

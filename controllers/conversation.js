@@ -2,8 +2,8 @@ let Type = require('../lib/validation/type');
 let validationError = require('../lib/errors/validationError');
 let {
 	User,
-	Conversation,
-	Message,
+	Conversation, 
+	Message, 
 	UserConversation,
 	Sequelize
 } = require('../models');
@@ -18,7 +18,7 @@ exports.create = async function (userIds, name) {
 	let users;
 
 	userIdsSet.forEach(id => {
-		userPromises.push(User.findById(id));
+		userPromises.push(User.findByPk(id));
 	});
 	users = (await Promise.all(userPromises)).filter(user => user !== null);
 
@@ -31,7 +31,7 @@ exports.create = async function (userIds, name) {
 		});
 
 		if(existingConversation) {
-			throw validationError(Sequelize, {
+			throw validationError({
 				message: 'A conversation with these people already exists',
 				value: userIds
 			});
@@ -42,7 +42,7 @@ exports.create = async function (userIds, name) {
 			return conversation.toJSON();
 		}
 	} else {
-		throw validationError(Sequelize, {
+		throw validationError({
 			message: 'At least two users required for a conversation',
 			value: userIds
 		});
@@ -171,7 +171,7 @@ exports.get = async function (userId, conversationId, page) {
 		offset = 0;
 	}
 
-	let conversation = await Conversation.findById(conversationId, {
+	let conversation = await Conversation.findByPk(conversationId, {
 		include: [
 			{
 				model: User,
@@ -194,7 +194,7 @@ exports.get = async function (userId, conversationId, page) {
 	});
 
 	if(!conversation) {
-		throw validationError(Sequelize, {
+		throw validationError({
 			message: 'Either the conversation doesn\'t exist or you\'re not part of the conversation'
 		});
 	} else {
@@ -206,12 +206,12 @@ exports.get = async function (userId, conversationId, page) {
 };
 
 exports.getUserIds = async function (conversationId) {
-	let conversation = await Conversation.findById(conversationId, {
+	let conversation = await Conversation.findByPk(conversationId, {
 		include: [{ model: User }]
 	});
 
 	if(!conversation) {
-		throw validationError(Sequelize, {
+		throw validationError({
 			message: 'The conversation doesn\'t exist'
 		});
 	} else {
@@ -228,7 +228,7 @@ exports.updateLastRead = async function (conversationId, userId) {
 
 	//Affected rows should always be 1
 	if(res[0] !== 1) {
-		throw validationError(Sequelize, {
+		throw validationError({
 			message: 'Either the conversationId or UserId is invalid'
 		});
 	} else {
@@ -237,7 +237,7 @@ exports.updateLastRead = async function (conversationId, userId) {
 };
 
 exports.updateName = async function (conversationId, userId, name) {
-	let conversation = await Conversation.findById(conversationId, {
+	let conversation = await Conversation.findByPk(conversationId, {
 		include: [{ model: User }]
 	});
 	
@@ -245,7 +245,7 @@ exports.updateName = async function (conversationId, userId, name) {
 		!conversation ||
 		conversation.Users.find(u => u.id === userId) === undefined
 	) {
-		throw validationError(Sequelize, {
+		throw validationError({
 			message: 'Either the conversationId or userId is invalid'
 		});
 	}

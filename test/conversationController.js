@@ -33,7 +33,7 @@ describe('Conversation controller', () => {
 			let res = await conversationController.create([1,2]);
 			res.should.have.property('name', undefined);
 
-			let conversation = await Conversation.findById(1, { include: [ User ] });
+			let conversation = await Conversation.findByPk(1, { include: [ User ] });
 			conversation.should.have.property('name', null);
 			conversation.Users.should.include.something.with.property('username', 'user_one');
 			conversation.Users.should.include.something.with.property('username', 'user_two');
@@ -43,7 +43,7 @@ describe('Conversation controller', () => {
 			let res = await conversationController.create([1, 2, 3], 'group name');
 			res.should.have.property('name', 'group name');
 
-			let conversation = await Conversation.findById(2, { include: [ User ] });
+			let conversation = await Conversation.findByPk(2, { include: [ User ] });
 			conversation.should.have.property('name', 'group name');
 			conversation.Users.should.include.something.with.property('username', 'user_one');
 			conversation.Users.should.include.something.with.property('username', 'user_two');

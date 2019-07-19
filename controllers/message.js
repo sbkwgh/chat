@@ -1,6 +1,6 @@
 let Type = require('../lib/validation/type');
 let validationError = require('../lib/errors/validationError');
-let { Message, Sequelize, User, Conversation } = require('../models');
+let { Message, User, Conversation, Sequelize } = require('../models');
 
 /*	params
 		userId:			integer
@@ -10,22 +10,22 @@ let { Message, Sequelize, User, Conversation } = require('../models');
 exports.create = async function (params) {
 	let { content, userId, conversationId } = params;
 
-	let user = await User.findById(userId);
+	let user = await User.findByPk(userId);
 	if(!user) {
-		throw validationError(Sequelize, {
+		throw validationError({
 			message: 'User does not exist',
 			path: 'UserId'
 		});
 	}
 
-	let conversation = await Conversation.findById(conversationId, {
+	let conversation = await Conversation.findByPk(conversationId, {
 		include: [{
 			model: User,
 			where: { id: userId }
 		}]
 	});
 	if(!conversation) {
-		throw validationError(Sequelize, {
+		throw validationError({
 			message: 'Conversation does not exist or user is not part of conversation',
 			path: 'ConversationId'
 		});

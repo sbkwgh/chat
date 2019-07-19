@@ -1,4 +1,4 @@
-const { sequelize } = require('./models');
+const { Sequelize } = require('./models');
 const sockets = require('./sockets');
 const express = require('express');
 const app = express();
@@ -30,7 +30,7 @@ app.use('/api/conversation', require('./routes/conversation'));
 app.use('/api/message', require('./routes/message'));
 
 app.use((err, req, res, next) => {
-	if(err instanceof sequelize.ValidationError) {
+	if(err.constructor === Sequelize.ValidationError) {
 		res.status(400);
 		res.json(err);
 	} else if (err.message === 'unauthorized') {

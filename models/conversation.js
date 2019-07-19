@@ -5,12 +5,12 @@ module.exports = (sequelize, DataTypes) => {
 			validate: {
 				isString (val) {
 					if(typeof val !== 'string') {
-						throw new sequelize.ValidationError('Name must be of type string');
+						throw new Error('Name must be of type string');
 					}
 				},
 				maxLength (val) {
 					if(val.toString().trim().length > 1000) {
-						throw new sequelize.ValidationError('Name must be 1000 characters or less')
+						throw new Error('Name must be 1000 characters or less')
 					}
 				}
 			}
